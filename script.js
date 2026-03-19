@@ -97,6 +97,7 @@ function initialize() {
   renderNav();
   renderWeekdays();
   renderSelectOptions();
+  renderModalityOptions();
   renderClasses();
   bindEvents();
 }
@@ -158,6 +159,16 @@ function renderSelectOptions() {
     option.value = room.id;
     option.textContent = `${room.name} • ${room.unit}`;
     classRoom.appendChild(option);
+function renderModalityOptions() {
+  modalityFilter.innerHTML = '<option value="all">Todas</option>';
+  classModality.innerHTML = '';
+  [modalityFilter, classModality].forEach((select) => {
+    modalities.forEach((modality) => {
+      const option = document.createElement('option');
+      option.value = modality;
+      option.textContent = modality;
+      select.appendChild(option);
+    });
   });
 }
 
@@ -185,6 +196,7 @@ function getFilteredClasses() {
       || item.modality.toLowerCase().includes(searchTerm)
       || room.name.toLowerCase().includes(searchTerm)
       || room.unit.toLowerCase().includes(searchTerm);
+    const matchesSearch = !searchTerm || item.name.toLowerCase().includes(searchTerm) || item.modality.toLowerCase().includes(searchTerm);
     const matchesModality = modality === 'all' || item.modality === modality;
     return matchesSearch && matchesModality;
   });
@@ -221,6 +233,7 @@ function renderClasses() {
           <div class="class-card__students">${item.studentIds.slice(0, 3).map((studentId) => `<span class="chip">${findStudent(studentId).name.split(' ')[0]}</span>`).join('')}${item.studentIds.length > 3 ? `<span class="chip">+${item.studentIds.length - 3}</span>` : ''}</div>
           <div class="class-card__capacity">Capacidade da sala: ${room.capacity} lugares</div>
         </div>
+        <div class="class-card__students">${item.studentIds.slice(0, 3).map((studentId) => `<span class="chip">${findStudent(studentId).name.split(' ')[0]}</span>`).join('')}${item.studentIds.length > 3 ? `<span class="chip">+${item.studentIds.length - 3}</span>` : ''}</div>
         <button class="secondary-button" data-edit-id="${item.id}">Editar turma</button>
       </div>
     `;
@@ -240,6 +253,11 @@ function renderSummary(filtered) {
     <article class="card stat-card"><div class="stat-card__label">Turmas visíveis</div><div class="stat-card__value">${filtered.length}</div></article>
     <article class="card stat-card"><div class="stat-card__label">Alunos envolvidos</div><div class="stat-card__value">${totalStudents}</div></article>
     <article class="card stat-card"><div class="stat-card__label">Salas em uso</div><div class="stat-card__value">${roomCount}</div></article>
+  const totalDays = new Set(filtered.flatMap((item) => item.weekdays)).size;
+  classesSummary.innerHTML = `
+    <article class="card stat-card"><div class="stat-card__label">Turmas visíveis</div><div class="stat-card__value">${filtered.length}</div></article>
+    <article class="card stat-card"><div class="stat-card__label">Alunos envolvidos</div><div class="stat-card__value">${totalStudents}</div></article>
+    <article class="card stat-card"><div class="stat-card__label">Turmas ativas</div><div class="stat-card__value">${activeCount}</div></article>
   `;
 }
 
@@ -250,6 +268,7 @@ function openModal(classId = null) {
   document.getElementById('modalSubtitle').textContent = editingClass
     ? 'Atualize as informações da turma, ajuste a sala e reorganize os integrantes.'
     : 'Preencha as informações da turma, selecione a sala e adicione os alunos.';
+  document.getElementById('modalSubtitle').textContent = editingClass ? 'Atualize as informações da turma e ajuste os integrantes.' : 'Preencha as informações da turma e selecione os alunos.';
   saveClassButton.textContent = editingClass ? 'Salvar Alterações' : 'Salvar Turma';
 
   draftStudentIds = editingClass ? [...editingClass.studentIds] : [];
@@ -292,6 +311,7 @@ function handleSaveClass(event) {
   };
 
   if (!payload.name || !payload.roomId || !payload.weekdays.length || !payload.startTime || !payload.endTime) {
+  if (!payload.name || !payload.weekdays.length || !payload.startTime || !payload.endTime) {
     return;
   }
 
