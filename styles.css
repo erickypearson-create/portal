@@ -141,6 +141,7 @@ button { cursor: pointer; }
 .class-card__meta { display:grid; gap:10px; color:#6b748c; }
 .class-card__meta-item { display:flex; align-items:center; gap:8px; }
 .class-card__students { display:flex; flex-wrap:wrap; gap:8px; }
+.class-card__capacity { margin-top: 10px; color:#73809b; font-weight:700; }
 .chip {
   display:inline-flex; align-items:center; gap:8px; padding: 8px 12px; border-radius:999px; background:#f0f7ff; color:var(--primary); font-weight:700; border:1px solid #d4e9ff;
 }

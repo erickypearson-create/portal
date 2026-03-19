@@ -1,4 +1,10 @@
 const modalities = ['Connections', 'Interactive', 'Connect and Learn'];
+const rooms = [
+  { id: 'sala-01', name: 'Sala 01', unit: 'Unidade Centro', capacity: 12 },
+  { id: 'sala-02', name: 'Sala 02', unit: 'Unidade Centro', capacity: 10 },
+  { id: 'lab-english', name: 'English Lab', unit: 'Unidade Norte', capacity: 8 },
+  { id: 'room-kids', name: 'Kids Room', unit: 'Unidade Sul', capacity: 14 },
+];
 const weekdays = [
   { id: 'seg', label: 'Seg' },
   { id: 'ter', label: 'Ter' },
@@ -25,6 +31,7 @@ let classes = [
     id: crypto.randomUUID(),
     name: 'Business Empire - Segunda e Quarta',
     modality: 'Connections',
+    roomId: 'sala-01',
     weekdays: ['seg', 'qua'],
     startTime: '18:30',
     endTime: '19:30',
@@ -35,6 +42,7 @@ let classes = [
     id: crypto.randomUUID(),
     name: 'Interactive Teens',
     modality: 'Interactive',
+    roomId: 'lab-english',
     weekdays: ['ter', 'qui'],
     startTime: '16:00',
     endTime: '17:00',
@@ -45,6 +53,7 @@ let classes = [
     id: crypto.randomUUID(),
     name: 'Connect and Learn - Sexta',
     modality: 'Connect and Learn',
+    roomId: 'room-kids',
     weekdays: ['sex'],
     startTime: '10:00',
     endTime: '11:30',
@@ -77,6 +86,7 @@ const classesSummary = document.getElementById('classesSummary');
 const classSearch = document.getElementById('classSearch');
 const modalityFilter = document.getElementById('modalityFilter');
 const classModality = document.getElementById('classModality');
+const classRoom = document.getElementById('classRoom');
 const studentSearch = document.getElementById('studentSearch');
 const studentOptions = document.getElementById('studentOptions');
 const selectedStudents = document.getElementById('selectedStudents');
@@ -86,6 +96,7 @@ const saveClassButton = document.getElementById('saveClassButton');
 function initialize() {
   renderNav();
   renderWeekdays();
+  renderSelectOptions();
   renderModalityOptions();
   renderClasses();
   bindEvents();
@@ -130,6 +141,24 @@ function selectPage(pageId) {
   renderNav();
 }
 
+function renderSelectOptions() {
+  modalityFilter.innerHTML = '<option value="all">Todas</option>';
+  classModality.innerHTML = '';
+  classRoom.innerHTML = '';
+
+  modalities.forEach((modality) => {
+    const option = document.createElement('option');
+    option.value = modality;
+    option.textContent = modality;
+    modalityFilter.appendChild(option.cloneNode(true));
+    classModality.appendChild(option);
+  });
+
+  rooms.forEach((room) => {
+    const option = document.createElement('option');
+    option.value = room.id;
+    option.textContent = `${room.name} • ${room.unit}`;
+    classRoom.appendChild(option);
 function renderModalityOptions() {
   modalityFilter.innerHTML = '<option value="all">Todas</option>';
   classModality.innerHTML = '';
@@ -161,6 +190,12 @@ function getFilteredClasses() {
   const searchTerm = classSearch.value.trim().toLowerCase();
   const modality = modalityFilter.value;
   return classes.filter((item) => {
+    const room = findRoom(item.roomId);
+    const matchesSearch = !searchTerm
+      || item.name.toLowerCase().includes(searchTerm)
+      || item.modality.toLowerCase().includes(searchTerm)
+      || room.name.toLowerCase().includes(searchTerm)
+      || room.unit.toLowerCase().includes(searchTerm);
     const matchesSearch = !searchTerm || item.name.toLowerCase().includes(searchTerm) || item.modality.toLowerCase().includes(searchTerm);
     const matchesModality = modality === 'all' || item.modality === modality;
     return matchesSearch && matchesModality;
@@ -175,6 +210,7 @@ function renderClasses() {
   classesList.classList.toggle('hidden', filtered.length === 0);
 
   filtered.forEach((item) => {
+    const room = findRoom(item.roomId);
     const article = document.createElement('article');
     article.className = 'card class-card';
     article.innerHTML = `
@@ -186,12 +222,17 @@ function renderClasses() {
         <button class="edit-link" data-edit-id="${item.id}">Editar</button>
       </div>
       <div class="class-card__meta">
+        <div class="class-card__meta-item">🏫 <span>${room.name} • ${room.unit}</span></div>
         <div class="class-card__meta-item">🗓 <span>${formatWeekdays(item.weekdays)}</span></div>
         <div class="class-card__meta-item">🕒 <span>${item.startTime} - ${item.endTime}</span></div>
         <div class="class-card__meta-item">👥 <span>${item.studentIds.length} aluno(s)</span></div>
         <div class="class-card__meta-item">● <span>Status: ${item.status}</span></div>
       </div>
       <div class="class-card__footer">
+        <div>
+          <div class="class-card__students">${item.studentIds.slice(0, 3).map((studentId) => `<span class="chip">${findStudent(studentId).name.split(' ')[0]}</span>`).join('')}${item.studentIds.length > 3 ? `<span class="chip">+${item.studentIds.length - 3}</span>` : ''}</div>
+          <div class="class-card__capacity">Capacidade da sala: ${room.capacity} lugares</div>
+        </div>
         <div class="class-card__students">${item.studentIds.slice(0, 3).map((studentId) => `<span class="chip">${findStudent(studentId).name.split(' ')[0]}</span>`).join('')}${item.studentIds.length > 3 ? `<span class="chip">+${item.studentIds.length - 3}</span>` : ''}</div>
         <button class="secondary-button" data-edit-id="${item.id}">Editar turma</button>
       </div>
@@ -207,6 +248,11 @@ function renderClasses() {
 function renderSummary(filtered) {
   const totalStudents = new Set(filtered.flatMap((item) => item.studentIds)).size;
   const activeCount = filtered.filter((item) => item.status === 'Ativa').length;
+  const roomCount = new Set(filtered.map((item) => item.roomId)).size;
+  classesSummary.innerHTML = `
+    <article class="card stat-card"><div class="stat-card__label">Turmas visíveis</div><div class="stat-card__value">${filtered.length}</div></article>
+    <article class="card stat-card"><div class="stat-card__label">Alunos envolvidos</div><div class="stat-card__value">${totalStudents}</div></article>
+    <article class="card stat-card"><div class="stat-card__label">Salas em uso</div><div class="stat-card__value">${roomCount}</div></article>
   const totalDays = new Set(filtered.flatMap((item) => item.weekdays)).size;
   classesSummary.innerHTML = `
     <article class="card stat-card"><div class="stat-card__label">Turmas visíveis</div><div class="stat-card__value">${filtered.length}</div></article>
@@ -219,6 +265,9 @@ function openModal(classId = null) {
   editingClassId = classId;
   const editingClass = classes.find((item) => item.id === classId);
   document.getElementById('modalTitle').textContent = editingClass ? 'Editar Turma' : 'Criar Turma';
+  document.getElementById('modalSubtitle').textContent = editingClass
+    ? 'Atualize as informações da turma, ajuste a sala e reorganize os integrantes.'
+    : 'Preencha as informações da turma, selecione a sala e adicione os alunos.';
   document.getElementById('modalSubtitle').textContent = editingClass ? 'Atualize as informações da turma e ajuste os integrantes.' : 'Preencha as informações da turma e selecione os alunos.';
   saveClassButton.textContent = editingClass ? 'Salvar Alterações' : 'Salvar Turma';
 
@@ -227,6 +276,7 @@ function openModal(classId = null) {
   document.getElementById('startTime').value = editingClass?.startTime ?? '';
   document.getElementById('endTime').value = editingClass?.endTime ?? '';
   classModality.value = editingClass?.modality ?? modalities[0];
+  classRoom.value = editingClass?.roomId ?? rooms[0].id;
   renderWeekdays(editingClass?.weekdays ?? []);
   studentSearch.value = '';
   renderSelectedStudents();
@@ -242,6 +292,7 @@ function closeModal() {
   editingClassId = null;
   draftStudentIds = [];
   renderWeekdays();
+  classRoom.value = rooms[0].id;
 }
 
 function handleSaveClass(event) {
@@ -251,6 +302,7 @@ function handleSaveClass(event) {
     id: editingClassId || crypto.randomUUID(),
     name: document.getElementById('className').value.trim(),
     modality: classModality.value,
+    roomId: classRoom.value,
     weekdays: selectedWeekdays,
     startTime: document.getElementById('startTime').value,
     endTime: document.getElementById('endTime').value,
@@ -258,6 +310,7 @@ function handleSaveClass(event) {
     status: draftStudentIds.length ? 'Ativa' : 'Planejamento',
   };
 
+  if (!payload.name || !payload.roomId || !payload.weekdays.length || !payload.startTime || !payload.endTime) {
   if (!payload.name || !payload.weekdays.length || !payload.startTime || !payload.endTime) {
     return;
   }
@@ -320,10 +373,15 @@ function findStudent(studentId) {
   return students.find((student) => student.id === studentId);
 }
 
+function findRoom(roomId) {
+  return rooms.find((room) => room.id === roomId) || rooms[0];
+}
+
 function openSidebar() {
   sidebar.classList.add('sidebar--open');
   overlay.classList.add('overlay--visible');
 }
+
 function closeSidebar() {
   sidebar.classList.remove('sidebar--open');
   overlay.classList.remove('overlay--visible');
