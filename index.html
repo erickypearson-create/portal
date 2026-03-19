@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Wizard Portal</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <div class="app-shell">
+      <aside class="sidebar" id="sidebar">
+        <div class="sidebar__header">
+          <div class="brand brand--sidebar">
+            <div class="brand__mark">W</div>
+            <div>
+              <div class="brand__name">WIZARD</div>
+              <div class="brand__sub">by Pearson</div>
+            </div>
+          </div>
+          <button class="icon-button sidebar__close" id="closeSidebar" aria-label="Fechar menu">✕</button>
+        </div>
+        <nav class="sidebar__nav" id="navMenu"></nav>
+        <div class="sidebar__footer">
+          <button class="nav-item nav-item--ghost"><span class="nav-item__icon">?</span><span>Ajuda</span></button>
+          <button class="nav-item nav-item--ghost"><span class="nav-item__icon">⚙</span><span>Configurações</span></button>
+          <button class="nav-item nav-item--ghost"><span class="nav-item__icon">⇥</span><span>Sair</span></button>
+        </div>
+      </aside>
+
+      <div class="overlay" id="overlay"></div>
+
+      <main class="main-content">
+        <header class="topbar">
+          <button class="icon-button menu-toggle" id="openSidebar" aria-label="Abrir menu">☰</button>
+          <div class="brand">
+            <div class="brand__mark">W</div>
+            <div>
+              <div class="brand__name">WIZARD</div>
+              <div class="brand__sub">by Pearson</div>
+            </div>
+          </div>
+          <div class="topbar__avatar">G</div>
+        </header>
+
+        <section class="page page--active" data-page="home" id="homePage">
+          <section class="hero card">
+            <div class="hero__identity">
+              <div class="hero__avatar">G</div>
+              <div>
+                <h1>Olá, Guilherme!</h1>
+                <p>Acesse as informações sobre suas aulas e aproveite o portal centralizado e automatizado!</p>
+              </div>
+            </div>
+            <div class="hero__tags">
+              <span class="tag">CONNECTIONS</span>
+              <span class="tag">INTERACTIVE</span>
+              <span class="tag">CONNECT_AND_LEARN</span>
+            </div>
+          </section>
+
+          <section class="section-header">
+            <div>
+              <h2>GRUPOS</h2>
+              <div class="section-header__meta">📅 Quinta-Feira, <strong>19 Março</strong> ▾</div>
+            </div>
+            <a href="#" class="section-link">Calendário →</a>
+          </section>
+
+          <section class="grid-two">
+            <div class="card agenda-card">
+              <button class="agenda-item agenda-item--active">
+                <span class="agenda-item__time">06:00</span>
+                <span class="agenda-item__title">LO Books validation</span>
+                <span class="status-pill">⏳</span>
+              </button>
+              <button class="agenda-item">
+                <span class="agenda-item__time">12:00</span>
+                <span class="agenda-item__title">Class Test Lesson Records - Gustavo</span>
+                <span class="status-pill">⏳</span>
+              </button>
+              <div class="progress-line"><span></span></div>
+            </div>
+            <div class="card detail-card">
+              <h3>LO Books validation</h3>
+              <div class="detail-card__meta">🗓 Data: <strong>Qui.</strong> &nbsp;&nbsp; 🕒 Horário: <strong>06:00 - 07:00</strong> &nbsp;&nbsp; 👥 Estudantes: <strong>0</strong></div>
+              <div class="detail-card__footer">
+                <div>
+                  <div class="muted-title">Status:</div>
+                  <div class="detail-card__status">⏳ Não iniciado</div>
+                </div>
+                <button class="primary-button">Preparar Aula</button>
+              </div>
+            </div>
+          </section>
+
+          <section class="grid-two">
+            <div>
+              <section class="section-header">
+                <h2>VISÃO GERAL</h2>
+                <a href="#" class="section-link">Painel →</a>
+              </section>
+              <div class="card analytics-card">
+                <div class="select-display">All <span>▾</span></div>
+                <div class="analytics-card__charts">
+                  <div class="ring ring--blue"><span>73%</span><small>Tarefas Pendentes</small></div>
+                  <div class="ring ring--yellow"><span>27%</span><small>Correções Pendentes</small></div>
+                  <div class="ring ring--red"><span>35%</span><small>Aulas Perdidas</small></div>
+                </div>
+              </div>
+            </div>
+            <div>
+              <section class="section-header">
+                <h2>BIBLIOTECA</h2>
+                <a href="#" class="section-link">Biblioteca →</a>
+              </section>
+              <div class="card library-card">
+                <div class="select-display">Selecionar um Curso <span>▾</span></div>
+              </div>
+            </div>
+          </section>
+
+          <section class="section-header">
+            <h2>GRUPOS</h2>
+            <a href="#" class="section-link">Ver Tudo →</a>
+          </section>
+          <section class="groups-grid">
+            <article class="card mini-group-card">
+              <h3>C&amp;L - Gustavo</h3>
+              <div class="mini-group-card__meta">🗓</div>
+              <div class="mini-group-card__meta">👥 0 Alunos</div>
+            </article>
+            <article class="card mini-group-card">
+              <h3>Class Business Empire</h3>
+              <div class="mini-group-card__meta">🗓</div>
+              <div class="mini-group-card__meta">👥 0 Alunos</div>
+            </article>
+            <article class="card mini-group-card">
+              <h3>Class Business Empire</h3>
+              <span class="label-dark">Business Empire 2 Ha</span>
+              <span class="tag tag--small">Connections</span>
+              <div class="mini-group-card__meta">🗓 Qua. - 11:00/11:00</div>
+              <div class="mini-group-card__meta">🗓 Sex. - 11:00/11:00</div>
+              <div class="mini-group-card__meta">👥 2 Alunos</div>
+            </article>
+            <article class="card mini-group-card">
+              <h3>Class C&amp;L - Gustavo</h3>
+              <div class="mini-group-card__meta">🗓</div>
+              <div class="mini-group-card__meta">👥 0 Alunos</div>
+            </article>
+          </section>
+        </section>
+
+        <section class="page" data-page="turmas" id="classesPage">
+          <section class="section-header section-header--page">
+            <div>
+              <h1>Turmas</h1>
+              <p>Gerencie as suas turmas, horários e integrantes dentro do mesmo fluxo do portal.</p>
+            </div>
+            <button class="primary-button" id="createClassButton">Criar Turma</button>
+          </section>
+
+          <section class="card filters-card">
+            <div class="search-field">
+              <span>⌕</span>
+              <input id="classSearch" type="text" placeholder="Buscar turma por nome ou modalidade" />
+            </div>
+            <div class="select-field">
+              <label for="modalityFilter">Modalidade</label>
+              <select id="modalityFilter">
+                <option value="all">Todas</option>
+              </select>
+            </div>
+          </section>
+
+          <section id="classesSummary" class="stats-strip"></section>
+          <section id="classesList" class="classes-grid"></section>
+          <section id="emptyState" class="card empty-state hidden">
+            <div class="empty-state__icon">📚</div>
+            <h3>Você ainda não possui turmas cadastradas</h3>
+            <p>Crie a primeira turma para organizar dias, horários e alunos no portal.</p>
+            <button class="primary-button" id="emptyCreateButton">Criar Turma</button>
+          </section>
+        </section>
+      </main>
+    </div>
+
+    <div class="modal hidden" id="classModal" aria-hidden="true">
+      <div class="modal__backdrop" id="modalBackdrop"></div>
+      <div class="modal__panel card">
+        <div class="modal__header">
+          <div>
+            <h2 id="modalTitle">Criar Turma</h2>
+            <p id="modalSubtitle">Preencha as informações da turma e selecione os alunos.</p>
+          </div>
+          <button class="icon-button" id="closeModal" aria-label="Fechar modal">✕</button>
+        </div>
+        <form id="classForm" class="form-layout">
+          <div class="field-group">
+            <label for="className">Nome da turma</label>
+            <input id="className" name="className" type="text" placeholder="Ex.: Business Empire - Segunda e Quarta" required />
+          </div>
+
+          <div class="field-group">
+            <span class="field-label">Dias da semana</span>
+            <div class="weekday-grid" id="weekdayGrid"></div>
+          </div>
+
+          <div class="time-grid">
+            <div class="field-group">
+              <label for="startTime">Horário inicial</label>
+              <input id="startTime" name="startTime" type="time" required />
+            </div>
+            <div class="field-group">
+              <label for="endTime">Horário final</label>
+              <input id="endTime" name="endTime" type="time" required />
+            </div>
+          </div>
+
+          <div class="field-group">
+            <label for="classModality">Modalidade</label>
+            <select id="classModality" name="classModality" required></select>
+          </div>
+
+          <div class="field-group">
+            <label for="studentSearch">Inserir integrantes / alunos</label>
+            <div class="student-selector">
+              <div class="search-field search-field--compact">
+                <span>⌕</span>
+                <input id="studentSearch" type="text" placeholder="Pesquisar aluno por nome" />
+              </div>
+              <div id="selectedStudents" class="chip-list"></div>
+              <div id="studentOptions" class="student-options"></div>
+            </div>
+          </div>
+
+          <div class="modal__actions">
+            <button type="button" class="secondary-button" id="cancelModal">Cancelar</button>
+            <button type="submit" class="primary-button" id="saveClassButton">Salvar Turma</button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <script src="script.js"></script>
+  </body>
+</html>
