@@ -97,6 +97,14 @@ const saveClassButton = document.getElementById('saveClassButton');
 
 function initialize() {
   bindEvents();
+  renderWeekdays();
+  renderSelectOptions();
+  renderClasses();
+  applyRoute();
+  window.addEventListener('hashchange', applyRoute);
+}
+
+function bindEvents() {
   renderNav();
   renderWeekdays();
   renderSelectOptions();
@@ -133,6 +141,22 @@ function bindEvents() {
   document.getElementById('startTime').addEventListener('input', updateRoomFeedback);
   document.getElementById('endTime').addEventListener('input', updateRoomFeedback);
   weekdayGrid.addEventListener('change', updateRoomFeedback);
+
+  navMenu.querySelectorAll('[data-nav-id]').forEach((link) => {
+    link.addEventListener('click', (event) => {
+      const pageId = link.dataset.navId;
+      if (pageId !== 'home' && pageId !== 'turmas') {
+        event.preventDefault();
+        return;
+      }
+      event.preventDefault();
+      window.location.hash = pageId;
+    });
+  });
+}
+
+function applyRoute() {
+  const pageId = window.location.hash.replace('#', '') === 'turmas' ? 'turmas' : 'home';
 }
 
 function renderNav() {
@@ -182,6 +206,13 @@ function selectPage(pageId) {
   document.querySelectorAll('.page').forEach((page) => {
     page.classList.toggle('page--active', page.dataset.page === pageId);
   });
+  navMenu.querySelectorAll('[data-nav-id]').forEach((link) => {
+    link.classList.toggle('is-active', link.dataset.navId === pageId);
+  });
+}
+
+function renderSelectOptions() {
+
   renderNav();
 }
 
@@ -399,6 +430,8 @@ function handleSaveClass(event) {
 
   renderClasses();
   closeModal();
+  window.location.hash = 'turmas';
+  applyRoute();
   selectPage('turmas');
 }
 

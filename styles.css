@@ -28,6 +28,10 @@ button { cursor: pointer; }
 .sidebar {
   width: 280px; background: var(--surface); border-right: 1px solid var(--border);
   display: flex; flex-direction: column; padding: 20px 16px; gap: 12px;
+  position: sticky; top: 0; height: 100vh; z-index: 30; flex-shrink: 0; overflow-y: auto; overflow-x: hidden;
+}
+.sidebar--open { transform: translateX(0); }
+.sidebar__header, .topbar, .topbar__left, .topbar__actions { display: flex; align-items: center; justify-content: space-between; }
   position: sticky; top: 0; height: 100vh; z-index: 30; flex-shrink: 0;
 }
 .sidebar--open { transform: translateX(0); }
