@@ -31,6 +31,7 @@ button { cursor: pointer; }
   position: fixed; inset: 0 auto 0 0; z-index: 30; transform: translateX(-100%); transition: transform .25s ease;
 }
 .sidebar--open { transform: translateX(0); }
+.sidebar__header, .topbar, .topbar__left, .topbar__actions { display: flex; align-items: center; justify-content: space-between; }
 .sidebar__header, .topbar { display: flex; align-items: center; justify-content: space-between; }
 .brand { display:flex; align-items:center; gap:14px; }
 .brand__mark, .hero__avatar, .topbar__avatar {
@@ -58,6 +59,7 @@ button { cursor: pointer; }
 .main-content { flex:1; width:100%; padding: 18px 20px 40px; }
 .topbar { padding-bottom: 18px; border-bottom: 1px solid var(--border); }
 .menu-toggle { display: inline-grid; }
+.topbar__left { gap: 12px; }
 .page { display:none; padding-top:24px; }
 .page--active { display:block; }
 .card {
@@ -69,6 +71,9 @@ button { cursor: pointer; }
 .hero h1 { font-size: 26px; margin-bottom: 4px; }
 .hero p, .section-header p { margin:0; color:#50608a; }
 .hero__tags { display:flex; flex-wrap:wrap; gap:10px; }
+.hero__action { margin-left: 8px; }
+.topbar__actions { gap: 12px; }
+.topbar__link { padding: 12px 18px; }
 .tag {
   display:inline-flex; align-items:center; justify-content:center; padding:8px 12px; border-radius: 6px;
   background: var(--primary-soft); color: var(--primary); font-weight:700; font-size: 12px; letter-spacing:.04em;
@@ -156,6 +161,10 @@ button { cursor: pointer; }
 .form-layout { display:grid; gap:18px; }
 .field-group { display:grid; gap:8px; }
 .field-group label, .field-label { color: var(--primary); font-weight:800; }
+.helper-text { color:#73809b; font-size: 14px; font-weight:700; }
+.conflict-message { border-radius:12px; padding:10px 12px; font-size:14px; font-weight:800; }
+.conflict-message--error { color:#b42318; background:#fff1f0; border:1px solid #f5c2c0; }
+.conflict-message--success { color:#0f6d38; background:#eefbf3; border:1px solid #b7e3c8; }
 .weekday-grid { display:grid; grid-template-columns: repeat(7, minmax(0, 1fr)); gap:10px; }
 .weekday-option { padding: 12px; display:flex; justify-content:center; align-items:center; color: var(--primary); font-weight:700; cursor:pointer; }
 .weekday-option input { display:none; }

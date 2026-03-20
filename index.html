@@ -34,6 +34,20 @@
 
       <main class="main-content">
         <header class="topbar">
+          <div class="topbar__left">
+            <button class="icon-button menu-toggle" id="openSidebar" aria-label="Abrir menu">☰</button>
+            <div class="brand">
+              <div class="brand__mark">W</div>
+              <div>
+                <div class="brand__name">WIZARD</div>
+                <div class="brand__sub">by Pearson</div>
+              </div>
+            </div>
+          </div>
+          <div class="topbar__actions">
+            <button class="secondary-button topbar__link" id="topbarTurmasButton">Turmas</button>
+            <div class="topbar__avatar">G</div>
+          </div>
           <button class="icon-button menu-toggle" id="openSidebar" aria-label="Abrir menu">☰</button>
           <div class="brand">
             <div class="brand__mark">W</div>
@@ -58,6 +72,7 @@
               <span class="tag">CONNECTIONS</span>
               <span class="tag">INTERACTIVE</span>
               <span class="tag">CONNECT_AND_LEARN</span>
+              <button class="secondary-button hero__action" id="heroTurmasButton">Ir para Turmas</button>
             </div>
           </section>
 
@@ -227,6 +242,8 @@
           <div class="field-group">
             <label for="classRoom">Sala</label>
             <select id="classRoom" name="classRoom" required></select>
+            <div id="roomHelper" class="helper-text">Selecione a sala para evitar conflito com outros professores.</div>
+            <div id="classConflict" class="conflict-message hidden" role="alert"></div>
           </div>
 
           <div class="field-group">
