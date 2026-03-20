@@ -134,6 +134,8 @@ function renderNav() {
   navMenu.querySelectorAll('[data-nav-id]').forEach((button) => {
     const pageId = button.dataset.navId;
     button.classList.toggle('is-active', selectedPage === pageId);
+    button.onclick = (event) => {
+      event.preventDefault();
     button.onclick = () => {
       if (pageId === 'turmas' || pageId === 'home') {
         selectPage(pageId);

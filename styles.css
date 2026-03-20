@@ -55,6 +55,7 @@ button { cursor: pointer; }
 .sidebar__footer { margin-top: auto; padding-top: 12px; }
 .nav-item {
   display:flex; align-items:center; gap:16px; border:none; background:transparent; color:var(--primary);
+  padding: 18px 20px; border-radius: 0 18px 18px 0; font-size: 20px; font-weight:700; text-align:left; text-decoration:none; width:100%;
   padding: 18px 20px; border-radius: 0 18px 18px 0; font-size: 20px; font-weight:700; text-align:left;
 }
 .nav-item__icon { width: 28px; text-align:center; color: #7b7f89; }
