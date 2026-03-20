@@ -96,10 +96,13 @@ const weekdayGrid = document.getElementById('weekdayGrid');
 const saveClassButton = document.getElementById('saveClassButton');
 
 function initialize() {
+  bindEvents();
   renderNav();
   renderWeekdays();
   renderSelectOptions();
   renderClasses();
+  syncPageWithHash();
+  window.addEventListener('hashchange', syncPageWithHash);
   bindEvents();
   if (window.innerWidth < 1180) {
     openSidebar();
@@ -115,6 +118,8 @@ function bindEvents() {
   overlay.addEventListener('click', closeSidebar);
   document.getElementById('createClassButton').addEventListener('click', () => openModal());
   document.getElementById('emptyCreateButton').addEventListener('click', () => openModal());
+  document.getElementById('topbarTurmasButton').addEventListener('click', () => { window.location.hash = 'turmas'; });
+  document.getElementById('heroTurmasButton').addEventListener('click', () => { window.location.hash = 'turmas'; });
   document.getElementById('topbarTurmasButton').addEventListener('click', () => selectPage('turmas'));
   document.getElementById('heroTurmasButton').addEventListener('click', () => selectPage('turmas'));
   document.getElementById('closeModal').addEventListener('click', closeModal);
@@ -135,6 +140,21 @@ function renderNav() {
     const pageId = button.dataset.navId;
     button.classList.toggle('is-active', selectedPage === pageId);
     button.onclick = (event) => {
+      if (pageId === 'turmas' || pageId === 'home') {
+        event.preventDefault();
+        window.location.hash = pageId;
+      }
+      closeSidebar();
+    };
+  });
+}
+
+function syncPageWithHash() {
+  const hashPage = window.location.hash.replace('#', '');
+  const nextPage = hashPage === 'turmas' ? 'turmas' : 'home';
+  selectPage(nextPage);
+}
+
       event.preventDefault();
     button.onclick = () => {
       if (pageId === 'turmas' || pageId === 'home') {

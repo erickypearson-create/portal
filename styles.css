@@ -121,12 +121,16 @@ button { cursor: pointer; }
 }
 .analytics-card, .library-card, .filters-card { padding: 22px; }
 .select-display { display:flex; justify-content:space-between; align-items:center; padding: 12px 14px; color: var(--primary); }
+.analytics-card__charts { display:flex; justify-content:space-evenly; align-items:flex-start; gap:18px; padding: 30px 10px 54px; flex-wrap:wrap; }
 .analytics-card__charts { display:flex; justify-content:space-evenly; gap:18px; padding: 30px 10px 10px; flex-wrap:wrap; }
 .ring {
   width: 118px; height:118px; border-radius:50%; display:grid; place-items:center; position:relative;
   background: conic-gradient(var(--ring-color) 0 var(--ring-size), #dedee0 var(--ring-size) 100%);
 }
 .ring::before { content:''; position:absolute; inset:18px; background:#fff; border-radius:50%; }
+.ring span, .ring small { z-index:1; display:block; text-align:center; }
+.ring span { position:relative; font-size: 18px; font-weight: 800; color:#666; }
+.ring small { position:absolute; top: calc(100% + 14px); left:50%; transform:translateX(-50%); width: 160px; color: var(--primary); font-size: 12px; font-weight:700; line-height:1.35; }
 .ring span, .ring small { position:relative; z-index:1; display:block; text-align:center; }
 .ring span { font-size: 18px; font-weight: 800; color:#666; }
 .ring small { margin-top: 54px; width: 160px; margin-left: -21px; color: var(--primary); font-size: 12px; font-weight:700; }
