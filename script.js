@@ -131,6 +131,15 @@ function bindEvents() {
 }
 
 function renderNav() {
+  navMenu.querySelectorAll('[data-nav-id]').forEach((button) => {
+    const pageId = button.dataset.navId;
+    button.classList.toggle('is-active', selectedPage === pageId);
+    button.onclick = () => {
+      if (pageId === 'turmas' || pageId === 'home') {
+        selectPage(pageId);
+      }
+      closeSidebar();
+    };
   navMenu.innerHTML = '';
   navItems.forEach((item) => {
     const button = document.createElement('button');
