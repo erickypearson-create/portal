@@ -104,6 +104,9 @@ function initialize() {
   if (window.innerWidth < 1180) {
     openSidebar();
   }
+  renderModalityOptions();
+  renderClasses();
+  bindEvents();
 }
 
 function bindEvents() {
@@ -137,6 +140,18 @@ function renderNav() {
       }
       closeSidebar();
     };
+  navMenu.innerHTML = '';
+  navItems.forEach((item) => {
+    const button = document.createElement('button');
+    button.className = `nav-item ${selectedPage === item.id ? 'is-active' : ''}`;
+    button.innerHTML = `<span class="nav-item__icon">${item.icon}</span><span>${item.label}</span>`;
+    button.addEventListener('click', () => {
+      if (item.id === 'turmas' || item.id === 'home') {
+        selectPage(item.id);
+      }
+      closeSidebar();
+    });
+    navMenu.appendChild(button);
   });
 }
 
@@ -163,6 +178,11 @@ function renderSelectOptions() {
     formOption.value = modality;
     formOption.textContent = modality;
     classModality.appendChild(formOption);
+    const option = document.createElement('option');
+    option.value = modality;
+    option.textContent = modality;
+    modalityFilter.appendChild(option.cloneNode(true));
+    classModality.appendChild(option);
   });
 
   rooms.forEach((room) => {
@@ -170,6 +190,16 @@ function renderSelectOptions() {
     option.value = room.id;
     option.textContent = `${room.name} • ${room.unit}`;
     classRoom.appendChild(option);
+function renderModalityOptions() {
+  modalityFilter.innerHTML = '<option value="all">Todas</option>';
+  classModality.innerHTML = '';
+  [modalityFilter, classModality].forEach((select) => {
+    modalities.forEach((modality) => {
+      const option = document.createElement('option');
+      option.value = modality;
+      option.textContent = modality;
+      select.appendChild(option);
+    });
   });
 }
 
@@ -185,6 +215,7 @@ function renderWeekdays(selected = []) {
         label.classList.toggle('is-selected', input.checked);
         updateRoomFeedback();
       }, 0);
+      setTimeout(() => label.classList.toggle('is-selected', input.checked), 0);
     });
     weekdayGrid.appendChild(label);
   });
@@ -200,6 +231,7 @@ function getFilteredClasses() {
       || item.modality.toLowerCase().includes(searchTerm)
       || room.name.toLowerCase().includes(searchTerm)
       || room.unit.toLowerCase().includes(searchTerm);
+    const matchesSearch = !searchTerm || item.name.toLowerCase().includes(searchTerm) || item.modality.toLowerCase().includes(searchTerm);
     const matchesModality = modality === 'all' || item.modality === modality;
     return matchesSearch && matchesModality;
   });
@@ -236,6 +268,7 @@ function renderClasses() {
           <div class="class-card__students">${item.studentIds.slice(0, 3).map((studentId) => `<span class="chip">${findStudent(studentId).name.split(' ')[0]}</span>`).join('')}${item.studentIds.length > 3 ? `<span class="chip">+${item.studentIds.length - 3}</span>` : ''}</div>
           <div class="class-card__capacity">Capacidade da sala: ${room.capacity} lugares</div>
         </div>
+        <div class="class-card__students">${item.studentIds.slice(0, 3).map((studentId) => `<span class="chip">${findStudent(studentId).name.split(' ')[0]}</span>`).join('')}${item.studentIds.length > 3 ? `<span class="chip">+${item.studentIds.length - 3}</span>` : ''}</div>
         <button class="secondary-button" data-edit-id="${item.id}">Editar turma</button>
       </div>
     `;
@@ -255,6 +288,11 @@ function renderSummary(filtered) {
     <article class="card stat-card"><div class="stat-card__label">Turmas visíveis</div><div class="stat-card__value">${filtered.length}</div></article>
     <article class="card stat-card"><div class="stat-card__label">Alunos envolvidos</div><div class="stat-card__value">${totalStudents}</div></article>
     <article class="card stat-card"><div class="stat-card__label">Salas em uso</div><div class="stat-card__value">${roomCount}</div></article>
+  const totalDays = new Set(filtered.flatMap((item) => item.weekdays)).size;
+  classesSummary.innerHTML = `
+    <article class="card stat-card"><div class="stat-card__label">Turmas visíveis</div><div class="stat-card__value">${filtered.length}</div></article>
+    <article class="card stat-card"><div class="stat-card__label">Alunos envolvidos</div><div class="stat-card__value">${totalStudents}</div></article>
+    <article class="card stat-card"><div class="stat-card__label">Turmas ativas</div><div class="stat-card__value">${activeCount}</div></article>
   `;
 }
 
@@ -265,6 +303,7 @@ function openModal(classId = null) {
   document.getElementById('modalSubtitle').textContent = editingClass
     ? 'Atualize as informações da turma, ajuste a sala e reorganize os integrantes.'
     : 'Preencha as informações da turma, selecione a sala e adicione os alunos.';
+  document.getElementById('modalSubtitle').textContent = editingClass ? 'Atualize as informações da turma e ajuste os integrantes.' : 'Preencha as informações da turma e selecione os alunos.';
   saveClassButton.textContent = editingClass ? 'Salvar Alterações' : 'Salvar Turma';
 
   draftStudentIds = editingClass ? [...editingClass.studentIds] : [];
@@ -298,6 +337,7 @@ function closeModal() {
 function handleSaveClass(event) {
   event.preventDefault();
   const selectedWeekdays = getSelectedWeekdays();
+  const selectedWeekdays = Array.from(weekdayGrid.querySelectorAll('input:checked')).map((input) => input.value);
   const payload = {
     id: editingClassId || crypto.randomUUID(),
     name: document.getElementById('className').value.trim(),
@@ -325,6 +365,7 @@ function handleSaveClass(event) {
   const conflict = findClassConflict(payload);
   if (conflict) {
     showConflictMessage(conflict);
+  if (!payload.name || !payload.weekdays.length || !payload.startTime || !payload.endTime) {
     return;
   }
 
