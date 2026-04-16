@@ -29,7 +29,7 @@ const students = [
 
 let classes = [
   {
-    id: crypto.randomUUID(),
+    id: createId(),
     name: 'Business Empire - Segunda e Quarta',
     modality: 'Connections',
     roomId: 'sala-01',
@@ -40,7 +40,7 @@ let classes = [
     status: 'Ativa',
   },
   {
-    id: crypto.randomUUID(),
+    id: createId(),
     name: 'Interactive Teens',
     modality: 'Interactive',
     roomId: 'lab-english',
@@ -51,7 +51,7 @@ let classes = [
     status: 'Planejamento',
   },
   {
-    id: crypto.randomUUID(),
+    id: createId(),
     name: 'Connect and Learn - Sexta',
     modality: 'Connect and Learn',
     roomId: 'room-kids',
@@ -66,6 +66,13 @@ let classes = [
 let selectedPage = 'home';
 let editingClassId = null;
 let draftStudentIds = [];
+
+function createId() {
+  if (globalThis.crypto && typeof globalThis.crypto.randomUUID === 'function') {
+    return globalThis.crypto.randomUUID();
+  }
+  return `class-${Date.now()}-${Math.random().toString(16).slice(2)}`;
+}
 
 const navMenu = document.getElementById('navMenu');
 const sidebar = document.getElementById('sidebar');
@@ -318,7 +325,7 @@ function closeModal() {
 function handleSaveClass(event) {
   event.preventDefault();
   const payload = {
-    id: editingClassId || crypto.randomUUID(),
+    id: editingClassId || createId(),
     name: document.getElementById('className').value.trim(),
     modality: classModality.value,
     roomId: classRoom.value,
