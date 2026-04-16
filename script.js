@@ -105,10 +105,10 @@ function bindEvents() {
   document.getElementById('createClassButton').addEventListener('click', () => openModal());
   document.getElementById('emptyCreateButton').addEventListener('click', () => openModal());
   document.getElementById('topbarTurmasButton').addEventListener('click', () => {
-    window.location.hash = 'turmas';
+    navigateToPage('turmas');
   });
   document.getElementById('heroTurmasButton').addEventListener('click', () => {
-    window.location.hash = 'turmas';
+    navigateToPage('turmas');
   });
 
   document.getElementById('closeModal').addEventListener('click', closeModal);
@@ -132,7 +132,7 @@ function bindEvents() {
         return;
       }
       event.preventDefault();
-      window.location.hash = pageId;
+      navigateToPage(pageId);
       closeSidebar();
     });
   });
@@ -153,6 +153,14 @@ function selectPage(pageId) {
   navMenu.querySelectorAll('[data-nav-id]').forEach((link) => {
     link.classList.toggle('is-active', link.dataset.navId === pageId);
   });
+}
+
+function navigateToPage(pageId) {
+  selectPage(pageId);
+  const nextHash = `#${pageId}`;
+  if (window.location.hash !== nextHash) {
+    window.location.hash = pageId;
+  }
 }
 
 function renderSelectOptions() {
@@ -347,7 +355,7 @@ function handleSaveClass(event) {
 
   renderClasses();
   closeModal();
-  window.location.hash = 'turmas';
+  navigateToPage('turmas');
 }
 
 function renderStudentOptions() {
