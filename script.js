@@ -27,9 +27,16 @@ const students = [
   { id: 10, name: 'Lucas Almeida', level: 'Interactive' },
 ];
 
+function generateId() {
+  if (typeof crypto !== 'undefined' && typeof crypto.randomUUID === 'function') {
+    return crypto.randomUUID();
+  }
+  return `class-${Date.now()}-${Math.random().toString(16).slice(2)}`;
+}
+
 let classes = [
   {
-    id: crypto.randomUUID(),
+    id: generateId(),
     name: 'Business Empire - Segunda e Quarta',
     modality: 'Connections',
     roomId: 'sala-01',
@@ -40,7 +47,7 @@ let classes = [
     status: 'Ativa',
   },
   {
-    id: crypto.randomUUID(),
+    id: generateId(),
     name: 'Interactive Teens',
     modality: 'Interactive',
     roomId: 'lab-english',
@@ -51,7 +58,7 @@ let classes = [
     status: 'Planejamento',
   },
   {
-    id: crypto.randomUUID(),
+    id: generateId(),
     name: 'Connect and Learn - Sexta',
     modality: 'Connect and Learn',
     roomId: 'room-kids',
@@ -259,7 +266,8 @@ function renderClasses() {
 }
 
 function renderSummary(filtered) {
-  const totalStudents = new Set(filtered.flatMap((item) => item.studentIds)).size;
+  const allStudentIds = filtered.reduce((acc, item) => acc.concat(item.studentIds), []);
+  const totalStudents = new Set(allStudentIds).size;
   const activeCount = filtered.filter((item) => item.status === 'Ativa').length;
   classesSummary.innerHTML = `
     <article class="card stat-card"><div class="stat-card__label">Turmas visíveis</div><div class="stat-card__value">${filtered.length}</div></article>
@@ -310,7 +318,7 @@ function closeModal() {
 function handleSaveClass(event) {
   event.preventDefault();
   const payload = {
-    id: editingClassId || crypto.randomUUID(),
+    id: editingClassId || generateId(),
     name: document.getElementById('className').value.trim(),
     modality: classModality.value,
     roomId: classRoom.value,
