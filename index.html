@@ -7,7 +7,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet" />
-    <link rel="stylesheet" href="styles.css" />
+    <link rel="stylesheet" href="styles.css?v=6" />
   </head>
   <body>
     <div class="app-shell">
@@ -77,6 +77,18 @@
             </div>
           </section>
 
+          <section class="home-classes" aria-labelledby="homeClassesTitle">
+            <div class="section-header">
+              <div>
+                <span class="flow-step">ACESSO RÁPIDO</span>
+                <h2 id="homeClassesTitle">MINHAS TURMAS E CHAMADA</h2>
+                <p>Abra uma turma para acessar os alunos, dar presença e lançar os conceitos F.A.L.E.</p>
+              </div>
+              <button class="secondary-button" id="viewAllClassesButton">Ver todas as turmas →</button>
+            </div>
+            <div id="homeClassesList" class="home-classes__grid"></div>
+          </section>
+
           <section class="section-header">
             <div>
               <h2>GRUPOS</h2>
@@ -130,10 +142,13 @@
             <div>
               <section class="section-header">
                 <h2>BIBLIOTECA</h2>
-                <a href="#" class="section-link">Biblioteca →</a>
+                <a href="#biblioteca" class="section-link" id="homeLibraryLink">Biblioteca →</a>
               </section>
               <div class="card library-card">
-                <div class="select-display">Selecionar um Curso <span>▾</span></div>
+                <label class="field-label" for="homeLibrarySelect">Selecionar um livro</label>
+                <select class="library-select" id="homeLibrarySelect">
+                  <option value="">Escolha um livro para abrir a biblioteca</option>
+                </select>
               </div>
             </div>
           </section>
@@ -169,13 +184,48 @@
           </section>
         </section>
 
+        <section class="page" data-page="biblioteca" id="libraryPage">
+          <section class="section-header section-header--page">
+            <div>
+              <span class="flow-step">MATERIAIS DIDÁTICOS</span>
+              <h1>Biblioteca</h1>
+              <p>Selecione um livro para visualizar os materiais e recursos disponíveis.</p>
+            </div>
+          </section>
+
+          <section class="card library-search-card">
+            <div class="search-field">
+              <span>⌕</span>
+              <input id="librarySearch" type="search" placeholder="Buscar livro pelo nome" aria-label="Buscar livro pelo nome" />
+            </div>
+          </section>
+
+          <section id="libraryBooks" class="library-books" aria-live="polite"></section>
+          <div id="libraryFeedback" class="library-feedback hidden" role="status"></div>
+          <section id="libraryEmpty" class="card empty-state hidden">
+            <div class="empty-state__icon">📚</div>
+            <h3>Nenhum livro encontrado</h3>
+            <p>Tente buscar usando outro nome.</p>
+          </section>
+        </section>
+
         <section class="page" data-page="turmas" id="classesPage">
+          <div id="classesOverview">
           <section class="section-header section-header--page">
             <div>
               <h1>Turmas</h1>
               <p>Gerencie as suas turmas, horários e integrantes dentro do mesmo fluxo do portal.</p>
             </div>
             <button class="primary-button" id="createClassButton">Criar Turma</button>
+          </section>
+
+          <section class="classes-callout" aria-label="Como registrar uma aula">
+            <div class="classes-callout__icon">✓</div>
+            <div>
+              <span class="flow-step">PASSO 1 DE 3</span>
+              <strong>Faça a chamada e lance os conceitos da aula</strong>
+              <p>Clique em <b>Abrir turma e chamada</b>, escolha um aluno e registre presença e conceitos F.A.L.E.</p>
+            </div>
           </section>
 
           <section class="card filters-card">
@@ -199,6 +249,10 @@
             <p>Crie a primeira turma para organizar dias, horários e alunos no portal.</p>
             <button class="primary-button" id="emptyCreateButton">Criar Turma</button>
           </section>
+          </div>
+
+          <section id="classDetail" class="detail-view hidden" aria-live="polite"></section>
+          <section id="studentRecord" class="detail-view hidden" aria-live="polite"></section>
         </section>
       </main>
     </div>
@@ -267,6 +321,6 @@
       </div>
     </div>
 
-    <script src="script.js"></script>
+    <script src="script.js?v=6"></script>
   </body>
 </html>
