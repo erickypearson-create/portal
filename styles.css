@@ -323,11 +323,16 @@ button { cursor: pointer; }
 .fale-field strong { color: var(--primary); }
 .fale-field small { color: var(--muted); min-height: 34px; }
 .fale-field select, .lesson-date, .lesson-notes { width: 100%; border: 1px solid #e2e7f0; border-radius: 10px; padding: 11px 12px; color: var(--primary); background: #fff; }
+.fale-field { border: 1px solid var(--border); border-radius: 14px; padding: 15px; display: grid; gap: 8px; }
+.fale-field strong { color: var(--primary); }
+.fale-field small { color: var(--muted); min-height: 34px; }
+.fale-field input, .lesson-date, .lesson-notes { width: 100%; border: 1px solid #e2e7f0; border-radius: 10px; padding: 11px 12px; color: var(--primary); }
 .lesson-notes { resize: vertical; min-height: 90px; }
 .save-feedback { color: #0f6d38; background: #eefbf3; border: 1px solid #b7e3c8; padding: 12px; border-radius: 12px; font-weight: 800; }
 .history-list { display: grid; gap: 10px; }
 .history-row { border: 1px solid var(--border); border-radius: 12px; padding: 14px; display: grid; grid-template-columns: 140px 120px 1fr; gap: 14px; align-items: center; }
 .history-row__concepts { display: flex; flex-wrap: wrap; gap: 8px; color: var(--primary); font-weight: 700; }
+.history-row__grades { display: flex; flex-wrap: wrap; gap: 8px; color: var(--primary); font-weight: 700; }
 .empty-state { padding: 46px 24px; text-align: center; margin-top: 18px; }
 .library-search-card { padding: 18px; margin-bottom: 18px; }
 .library-books { display: grid; gap: 10px; }
