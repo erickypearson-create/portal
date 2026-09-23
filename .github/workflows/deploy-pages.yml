@@ -33,6 +33,8 @@ jobs:
         run: |
           mkdir _site
           cp index.html turmas.html biblioteca.html grupos.html script.js styles.css .nojekyll _site/
+          cp index.html turmas.html biblioteca.html script.js styles.css .nojekyll _site/
+          cp index.html script.js styles.css .nojekyll _site/
 
       - name: Enviar os arquivos do portal
         uses: actions/upload-pages-artifact@v3
