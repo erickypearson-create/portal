@@ -297,6 +297,7 @@ function renderHomeClasses() {
       <div><span class="tag">${item.modality}</span><h3>${item.name}</h3></div>
       <div class="home-class-card__meta">🗓 ${formatWeekdays(item.weekdays)} · ${item.startTime}</div>
       <div class="home-class-card__meta">👥 ${item.studentIds.length} aluno(s)</div>
+      <button class="primary-button class-card__open" type="button" data-home-class-id="${item.id}">👥 Abrir chamada e conceitos →</button>
       <button class="primary-button class-card__open" type="button" data-home-class-id="${item.id}">👥 Abrir chamada e notas →</button>
     </article>
   `).join('');
@@ -330,6 +331,7 @@ function openClassDetail(classId) {
       <div><span class="tag">${item.modality}</span><h1>${item.name}</h1><p>${formatWeekdays(item.weekdays)} · ${item.startTime} - ${item.endTime} · ${findRoom(item.roomId).name}</p></div>
       <strong>${item.studentIds.length} aluno(s)</strong>
     </div>
+    <div><div class="section-header"><div><span class="flow-step">PASSO 2 DE 3</span><h2>Selecione um aluno</h2><p>Clique no nome do aluno para abrir a ficha de presença e conceitos.</p></div></div>
     <div><div class="section-header"><div><span class="flow-step">PASSO 2 DE 3</span><h2>Selecione um aluno</h2><p>Clique no nome do aluno para abrir a ficha de presença e notas.</p></div></div>
     <div><div class="section-header"><div><h2>ALUNOS DA TURMA</h2><p>Selecione um aluno para registrar presença e conceitos F.A.L.E.</p></div></div>
       <div class="student-list">${item.studentIds.length ? item.studentIds.map((id) => {
@@ -361,6 +363,15 @@ function renderStudentRecord(item, student) {
   studentRecord.innerHTML = `
     <button class="breadcrumb-button" type="button" id="backToStudents">← Voltar para alunos</button>
     <div class="card detail-hero"><div><span class="tag">${student.level}</span><h1>${student.name}</h1><p>${item.name}</p></div></div>
+    <div class="card record-card"><span class="flow-step">PASSO 3 DE 3</span><h2>Presença e conceitos da aula</h2><form id="lessonForm" class="lesson-form">
+      <div class="lesson-info-grid"><div class="field-group"><label for="lessonDate">Data da aula</label><input class="lesson-date" id="lessonDate" type="date" value="${today}" required></div>
+      <div class="field-group"><span class="field-label">Presença</span><div class="attendance-options"><label class="attendance-option"><input type="radio" name="attendance" value="Presente" checked><span>✓ Presente</span></label><label class="attendance-option"><input type="radio" name="attendance" value="Ausente"><span>✕ Ausente</span></label><label class="attendance-option"><input type="radio" name="attendance" value="Justificada"><span>! Justificada</span></label></div></div></div>
+      <div><span class="field-label">Conceitos F.A.L.E.</span><div class="concept-legend"><span><b>R</b> Regular</span><span><b>B</b> Bom</span><span><b>MB</b> Muito bom</span><span><b>O</b> Ótimo</span></div><div class="fale-grid">
+        ${['F','A','L','E'].map((letter) => `<label class="fale-field"><strong>Conceito ${letter}</strong><small>Selecione o desempenho na aula</small><select name="concept${letter}" required><option value="" selected disabled>Selecionar</option><option value="R">R — Regular</option><option value="B">B — Bom</option><option value="MB">MB — Muito bom</option><option value="O">O — Ótimo</option></select></label>`).join('')}
+      </div></div><label class="field-group"><span class="field-label">Observações da aula</span><textarea class="lesson-notes" name="notes" placeholder="Registre comentários sobre o desempenho do aluno..."></textarea></label>
+      <div id="saveFeedback" class="save-feedback hidden" role="status"></div><div class="modal__actions"><button class="primary-button" type="submit">Salvar presença e conceitos</button></div>
+    </form></div>
+    <div class="card record-card"><h2>Histórico de aulas</h2><div class="history-list">${records.length ? records.map((record) => `<div class="history-row"><strong>${formatDate(record.date)}</strong><span>${record.attendance}</span><div class="history-row__concepts">F: ${record.concepts.F} · A: ${record.concepts.A} · L: ${record.concepts.L} · E: ${record.concepts.E}</div></div>`).join('') : '<p class="helper-text">Nenhum registro realizado para este aluno.</p>'}</div></div>`;
     <div class="card record-card"><span class="flow-step">PASSO 3 DE 3</span><h2>Presença e notas da aula</h2><form id="lessonForm" class="lesson-form">
     <div class="card record-card"><h2>Registro da aula</h2><form id="lessonForm" class="lesson-form">
       <div class="lesson-info-grid"><div class="field-group"><label for="lessonDate">Data da aula</label><input class="lesson-date" id="lessonDate" type="date" value="${today}" required></div>
@@ -379,11 +390,13 @@ function saveLessonRecord(event, item, student) {
   event.preventDefault();
   const form = event.currentTarget;
   const data = new FormData(form);
+  const record = { date: document.getElementById('lessonDate').value, attendance: data.get('attendance'), concepts: { F: data.get('conceptF'), A: data.get('conceptA'), L: data.get('conceptL'), E: data.get('conceptE') }, notes: data.get('notes').trim() };
   const record = { date: document.getElementById('lessonDate').value, attendance: data.get('attendance'), grades: { F: data.get('gradeF'), A: data.get('gradeA'), L: data.get('gradeL'), E: data.get('gradeE') }, notes: data.get('notes').trim() };
   const key = recordKey(item.id, student.id);
   lessonRecords[key] = [...(lessonRecords[key] || []).filter((entry) => entry.date !== record.date), record].sort((a, b) => b.date.localeCompare(a.date));
   renderStudentRecord(item, student);
   const feedback = document.getElementById('saveFeedback');
+  feedback.textContent = 'Presença e conceitos R/B/MB/O salvos com sucesso.';
   feedback.textContent = 'Presença e conceitos salvos com sucesso.';
   feedback.classList.remove('hidden');
 }

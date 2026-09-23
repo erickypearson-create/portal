@@ -315,6 +315,12 @@ button { cursor: pointer; }
 .attendance-option span { display: block; padding: 11px 16px; border: 1px solid var(--border); border-radius: 999px; color: var(--primary); font-weight: 800; cursor: pointer; }
 .attendance-option input:checked + span { color: #fff; background: var(--primary); border-color: var(--primary); }
 .fale-grid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 14px; }
+.concept-legend { display: flex; flex-wrap: wrap; gap: 8px; margin: 10px 0 14px; }
+.concept-legend span { padding: 7px 10px; border-radius: 999px; background: #edf6ff; color: var(--primary); font-size: 13px; }
+.fale-field { border: 1px solid var(--border); border-radius: 14px; padding: 15px; display: grid; gap: 8px; }
+.fale-field strong { color: var(--primary); }
+.fale-field small { color: var(--muted); min-height: 34px; }
+.fale-field select, .lesson-date, .lesson-notes { width: 100%; border: 1px solid #e2e7f0; border-radius: 10px; padding: 11px 12px; color: var(--primary); background: #fff; }
 .fale-field { border: 1px solid var(--border); border-radius: 14px; padding: 15px; display: grid; gap: 8px; }
 .fale-field strong { color: var(--primary); }
 .fale-field small { color: var(--muted); min-height: 34px; }
@@ -323,6 +329,7 @@ button { cursor: pointer; }
 .save-feedback { color: #0f6d38; background: #eefbf3; border: 1px solid #b7e3c8; padding: 12px; border-radius: 12px; font-weight: 800; }
 .history-list { display: grid; gap: 10px; }
 .history-row { border: 1px solid var(--border); border-radius: 12px; padding: 14px; display: grid; grid-template-columns: 140px 120px 1fr; gap: 14px; align-items: center; }
+.history-row__concepts { display: flex; flex-wrap: wrap; gap: 8px; color: var(--primary); font-weight: 700; }
 .history-row__grades { display: flex; flex-wrap: wrap; gap: 8px; color: var(--primary); font-weight: 700; }
 .empty-state { padding: 46px 24px; text-align: center; margin-top: 18px; }
 
