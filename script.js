@@ -409,6 +409,60 @@ function renderClasses() {
     const classId = card.querySelector('[data-open-id]').dataset.openId;
     card.addEventListener('click', () => openClassDetail(classId));
   });
+  classesList.querySelectorAll('.class-card').forEach((card) => {
+    const classId = card.querySelector('[data-open-id]').dataset.openId;
+    card.addEventListener('click', () => openClassDetail(classId));
+  });
+}
+
+function renderHomeClasses() {
+  homeClassesList.innerHTML = classes.slice(0, 3).map((item) => `
+    <article class="card home-class-card">
+      <div><span class="tag">${item.modality}</span><h3>${item.name}</h3></div>
+      <div class="home-class-card__meta">🗓 ${formatWeekdays(item.weekdays)} · ${item.startTime}</div>
+      <div class="home-class-card__meta">👥 ${item.studentIds.length} aluno(s)</div>
+      <button class="primary-button class-card__open" type="button" data-home-class-id="${item.id}">👥 Abrir chamada e conceitos →</button>
+    </article>
+  `).join('');
+
+  homeClassesList.querySelectorAll('[data-home-class-id]').forEach((button) => {
+    button.addEventListener('click', () => {
+      navigateToPage('turmas');
+      openClassDetail(button.dataset.homeClassId);
+    });
+  });
+}
+
+function showClassesOverview() {
+  selectedClassId = null;
+  selectedStudentId = null;
+  classesOverview.classList.remove('hidden');
+  classDetail.classList.add('hidden');
+  studentRecord.classList.add('hidden');
+}
+
+function openClassDetail(classId) {
+  const item = classes.find((entry) => entry.id === classId);
+  if (!item) return;
+  selectedClassId = classId;
+  classesOverview.classList.add('hidden');
+  studentRecord.classList.add('hidden');
+  classDetail.classList.remove('hidden');
+  classDetail.innerHTML = `
+    <button class="breadcrumb-button" type="button" id="backToClasses">← Voltar para Turmas</button>
+    <div class="card detail-hero">
+      <div><span class="tag">${item.modality}</span><h1>${item.name}</h1><p>${formatWeekdays(item.weekdays)} · ${item.startTime} - ${item.endTime} · ${findRoom(item.roomId).name}</p></div>
+      <strong>${item.studentIds.length} aluno(s)</strong>
+    </div>
+    <div><div class="section-header"><div><span class="flow-step">PASSO 2 DE 3</span><h2>Selecione um aluno</h2><p>Clique no nome do aluno para abrir a ficha de presença e conceitos.</p></div></div>
+      <div class="student-list">${item.studentIds.length ? item.studentIds.map((id) => {
+        const student = findStudent(id);
+        return `<button class="student-row" type="button" data-student-id="${id}"><span><strong>${student.name}</strong><span>${student.level}</span></span><span class="student-row__action">Acessar aluno →</span></button>`;
+      }).join('') : '<div class="card empty-state"><h3>Nenhum aluno nesta turma</h3><p>Edite a turma para adicionar integrantes.</p></div>'}</div>
+    </div>`;
+  document.getElementById('backToClasses').addEventListener('click', showClassesOverview);
+  classDetail.querySelectorAll('[data-student-id]').forEach((button) => button.addEventListener('click', () => openStudentRecord(Number(button.dataset.studentId))));
+  window.scrollTo({ top: 0, behavior: 'smooth' });
 }
 
 function renderHomeClasses() {

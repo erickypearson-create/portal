@@ -7,6 +7,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="styles.css?v=8" />
     <link rel="stylesheet" href="styles.css?v=7" />
     <link rel="stylesheet" href="styles.css?v=6" />
     <link rel="stylesheet" href="styles.css?v=5" />
@@ -28,6 +29,10 @@
         </div>
 
         <nav class="sidebar__nav" id="navMenu">
+          <a href="./index.html#home" class="nav-item is-active" data-nav-id="home"><span class="nav-item__icon">⌂</span><span>Início</span></a>
+          <a href="./index.html#biblioteca" class="nav-item" data-nav-id="biblioteca"><span class="nav-item__icon">▣</span><span>Biblioteca</span></a>
+          <a href="#grupos" class="nav-item" data-nav-id="grupos"><span class="nav-item__icon">👥</span><span>Grupos</span></a>
+          <a href="./index.html#turmas" class="nav-item" data-nav-id="turmas"><span class="nav-item__icon">🧑‍🏫</span><span>Turmas</span></a>
           <a href="#home" class="nav-item is-active" data-nav-id="home"><span class="nav-item__icon">⌂</span><span>Início</span></a>
           <a href="biblioteca.html" class="nav-item" data-nav-id="biblioteca"><span class="nav-item__icon">▣</span><span>Biblioteca</span></a>
           <a href="#grupos" class="nav-item" data-nav-id="grupos"><span class="nav-item__icon">👥</span><span>Grupos</span></a>
@@ -59,12 +64,13 @@
             </div>
           </div>
           <div class="topbar__actions">
+            <a href="./index.html#turmas" class="secondary-button topbar__link" id="topbarTurmasButton">Turmas</a>
             <a href="turmas.html" class="secondary-button topbar__link" id="topbarTurmasButton">Turmas</a>
             <div class="topbar__avatar">G</div>
           </div>
         </header>
 
-        <section class="page page--active" data-page="home" id="homePage">
+        <section class="page page--active" data-page="home" id="home">
           <section class="hero card">
             <div class="hero__identity">
               <div class="hero__avatar">G</div>
@@ -77,6 +83,7 @@
               <span class="tag">CONNECTIONS</span>
               <span class="tag">INTERACTIVE</span>
               <span class="tag">CONNECT_AND_LEARN</span>
+              <a href="./index.html#turmas" class="secondary-button hero__action" id="heroTurmasButton">Ir para Turmas</a>
               <a href="turmas.html" class="secondary-button hero__action" id="heroTurmasButton">Ir para Turmas</a>
             </div>
           </section>
@@ -147,6 +154,7 @@
             <div>
               <section class="section-header">
                 <h2>BIBLIOTECA</h2>
+                <a href="./index.html#biblioteca" class="section-link" id="homeLibraryLink">Biblioteca →</a>
                 <a href="biblioteca.html" class="section-link" id="homeLibraryLink">Biblioteca →</a>
                 <a href="#biblioteca" class="section-link" id="homeLibraryLink">Biblioteca →</a>
               </section>
@@ -190,6 +198,7 @@
           </section>
         </section>
 
+        <section class="page" data-page="biblioteca" id="biblioteca">
         <section class="page" data-page="biblioteca" id="libraryPage">
           <section class="section-header section-header--page">
             <div>
@@ -215,6 +224,7 @@
           </section>
         </section>
 
+        <section class="page" data-page="turmas" id="turmas">
         <section class="page" data-page="turmas" id="classesPage">
           <div id="classesOverview">
           <section class="section-header section-header--page">
@@ -328,6 +338,7 @@
       </div>
     </div>
 
+    <script src="script.js?v=8"></script>
     <script src="script.js?v=7"></script>
     <script src="script.js?v=6"></script>
     <script src="script.js?v=5"></script>
