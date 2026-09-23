@@ -66,6 +66,9 @@ let classes = [
 let selectedPage = 'home';
 let editingClassId = null;
 let draftStudentIds = [];
+let selectedClassId = null;
+let selectedStudentId = null;
+const lessonRecords = {};
 
 function createId() {
   if (globalThis.crypto && typeof globalThis.crypto.randomUUID === 'function') {
@@ -93,6 +96,9 @@ const studentOptions = document.getElementById('studentOptions');
 const selectedStudents = document.getElementById('selectedStudents');
 const weekdayGrid = document.getElementById('weekdayGrid');
 const saveClassButton = document.getElementById('saveClassButton');
+const classesOverview = document.getElementById('classesOverview');
+const classDetail = document.getElementById('classDetail');
+const studentRecord = document.getElementById('studentRecord');
 
 function initialize() {
   bindEvents();
@@ -160,6 +166,7 @@ function selectPage(pageId) {
   navMenu.querySelectorAll('[data-nav-id]').forEach((link) => {
     link.classList.toggle('is-active', link.dataset.navId === pageId);
   });
+  if (pageId !== 'turmas') showClassesOverview();
 }
 
 function navigateToPage(pageId) {
@@ -238,7 +245,7 @@ function renderClasses() {
   filtered.forEach((item) => {
     const room = findRoom(item.roomId);
     const article = document.createElement('article');
-    article.className = 'card class-card';
+    article.className = 'card class-card class-card--clickable';
     article.innerHTML = `
       <div class="class-card__header">
         <div>
@@ -262,16 +269,102 @@ function renderClasses() {
             .join('')}${item.studentIds.length > 3 ? `<span class="chip">+${item.studentIds.length - 3}</span>` : ''}</div>
           <div class="class-card__capacity">Capacidade da sala: ${room.capacity} lugares</div>
         </div>
-        <button class="secondary-button" data-edit-id="${item.id}">Editar turma</button>
+        <button class="secondary-button" data-open-id="${item.id}">Ver alunos</button>
       </div>
     `;
     classesList.appendChild(article);
   });
 
   classesList.querySelectorAll('[data-edit-id]').forEach((button) => {
-    button.addEventListener('click', () => openModal(button.dataset.editId));
+    button.addEventListener('click', (event) => {
+      event.stopPropagation();
+      openModal(button.dataset.editId);
+    });
+  });
+  classesList.querySelectorAll('.class-card').forEach((card) => {
+    const classId = card.querySelector('[data-open-id]').dataset.openId;
+    card.addEventListener('click', () => openClassDetail(classId));
   });
 }
+
+function showClassesOverview() {
+  selectedClassId = null;
+  selectedStudentId = null;
+  classesOverview.classList.remove('hidden');
+  classDetail.classList.add('hidden');
+  studentRecord.classList.add('hidden');
+}
+
+function openClassDetail(classId) {
+  const item = classes.find((entry) => entry.id === classId);
+  if (!item) return;
+  selectedClassId = classId;
+  classesOverview.classList.add('hidden');
+  studentRecord.classList.add('hidden');
+  classDetail.classList.remove('hidden');
+  classDetail.innerHTML = `
+    <button class="breadcrumb-button" type="button" id="backToClasses">← Voltar para Turmas</button>
+    <div class="card detail-hero">
+      <div><span class="tag">${item.modality}</span><h1>${item.name}</h1><p>${formatWeekdays(item.weekdays)} · ${item.startTime} - ${item.endTime} · ${findRoom(item.roomId).name}</p></div>
+      <strong>${item.studentIds.length} aluno(s)</strong>
+    </div>
+    <div><div class="section-header"><div><h2>ALUNOS DA TURMA</h2><p>Selecione um aluno para registrar presença e conceitos F.A.L.E.</p></div></div>
+      <div class="student-list">${item.studentIds.length ? item.studentIds.map((id) => {
+        const student = findStudent(id);
+        return `<button class="student-row" type="button" data-student-id="${id}"><span><strong>${student.name}</strong><span>${student.level}</span></span><span class="student-row__action">Acessar aluno →</span></button>`;
+      }).join('') : '<div class="card empty-state"><h3>Nenhum aluno nesta turma</h3><p>Edite a turma para adicionar integrantes.</p></div>'}</div>
+    </div>`;
+  document.getElementById('backToClasses').addEventListener('click', showClassesOverview);
+  classDetail.querySelectorAll('[data-student-id]').forEach((button) => button.addEventListener('click', () => openStudentRecord(Number(button.dataset.studentId))));
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function openStudentRecord(studentId) {
+  const item = classes.find((entry) => entry.id === selectedClassId);
+  const student = findStudent(studentId);
+  if (!item || !student) return;
+  selectedStudentId = studentId;
+  classDetail.classList.add('hidden');
+  studentRecord.classList.remove('hidden');
+  renderStudentRecord(item, student);
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function recordKey(classId, studentId) { return `${classId}:${studentId}`; }
+
+function renderStudentRecord(item, student) {
+  const records = lessonRecords[recordKey(item.id, student.id)] || [];
+  const today = new Date().toISOString().slice(0, 10);
+  studentRecord.innerHTML = `
+    <button class="breadcrumb-button" type="button" id="backToStudents">← Voltar para alunos</button>
+    <div class="card detail-hero"><div><span class="tag">${student.level}</span><h1>${student.name}</h1><p>${item.name}</p></div></div>
+    <div class="card record-card"><h2>Registro da aula</h2><form id="lessonForm" class="lesson-form">
+      <div class="lesson-info-grid"><div class="field-group"><label for="lessonDate">Data da aula</label><input class="lesson-date" id="lessonDate" type="date" value="${today}" required></div>
+      <div class="field-group"><span class="field-label">Presença</span><div class="attendance-options"><label class="attendance-option"><input type="radio" name="attendance" value="Presente" checked><span>✓ Presente</span></label><label class="attendance-option"><input type="radio" name="attendance" value="Ausente"><span>✕ Ausente</span></label><label class="attendance-option"><input type="radio" name="attendance" value="Justificada"><span>! Justificada</span></label></div></div></div>
+      <div><span class="field-label">Conceitos F.A.L.E. <small>(notas de 0 a 10)</small></span><div class="fale-grid">
+        ${['F','A','L','E'].map((letter) => `<label class="fale-field"><strong>Conceito ${letter}</strong><small>Avaliação do desempenho na aula</small><input name="grade${letter}" type="number" min="0" max="10" step="0.1" required placeholder="0 a 10"></label>`).join('')}
+      </div></div><label class="field-group"><span class="field-label">Observações da aula</span><textarea class="lesson-notes" name="notes" placeholder="Registre comentários sobre o desempenho do aluno..."></textarea></label>
+      <div id="saveFeedback" class="save-feedback hidden" role="status"></div><div class="modal__actions"><button class="primary-button" type="submit">Salvar presença e notas</button></div>
+    </form></div>
+    <div class="card record-card"><h2>Histórico de aulas</h2><div class="history-list">${records.length ? records.map((record) => `<div class="history-row"><strong>${formatDate(record.date)}</strong><span>${record.attendance}</span><div class="history-row__grades">F: ${record.grades.F} · A: ${record.grades.A} · L: ${record.grades.L} · E: ${record.grades.E}</div></div>`).join('') : '<p class="helper-text">Nenhum registro realizado para este aluno.</p>'}</div></div>`;
+  document.getElementById('backToStudents').addEventListener('click', () => openClassDetail(item.id));
+  document.getElementById('lessonForm').addEventListener('submit', (event) => saveLessonRecord(event, item, student));
+}
+
+function saveLessonRecord(event, item, student) {
+  event.preventDefault();
+  const form = event.currentTarget;
+  const data = new FormData(form);
+  const record = { date: document.getElementById('lessonDate').value, attendance: data.get('attendance'), grades: { F: data.get('gradeF'), A: data.get('gradeA'), L: data.get('gradeL'), E: data.get('gradeE') }, notes: data.get('notes').trim() };
+  const key = recordKey(item.id, student.id);
+  lessonRecords[key] = [...(lessonRecords[key] || []).filter((entry) => entry.date !== record.date), record].sort((a, b) => b.date.localeCompare(a.date));
+  renderStudentRecord(item, student);
+  const feedback = document.getElementById('saveFeedback');
+  feedback.textContent = 'Presença e conceitos salvos com sucesso.';
+  feedback.classList.remove('hidden');
+}
+
+function formatDate(date) { return date.split('-').reverse().join('/'); }
 
 function renderSummary(filtered) {
   const totalStudents = new Set(filtered.flatMap((item) => item.studentIds)).size;
