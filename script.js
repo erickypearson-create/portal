@@ -14,6 +14,24 @@ const weekdays = [
   { id: 'sab', label: 'Sáb' },
   { id: 'dom', label: 'Dom' },
 ];
+const libraryBooks = [
+  { id: 'new-w2-ha', name: 'New W2 HA', color: '#217db8' },
+  { id: 'new-w4', name: 'New W4', color: '#319274' },
+  { id: 'new-w4-ha', name: 'New W4 HA', color: '#52a78d' },
+  { id: 'new-w6', name: 'New W6', color: '#f18b69' },
+  { id: 'new-w8', name: 'New W8', color: '#a6667b' },
+  { id: 'new-w10', name: 'New W10', color: '#7d8791' },
+  { id: 'new-w12', name: 'New W12', color: '#b68a4c' },
+  { id: 'teens-2-ha', name: 'Teens 2 3rd Ed HA', color: '#96378f' },
+  { id: 'teens-2', name: 'Teens 2 3rd Edition', color: '#a23b98' },
+  { id: 'teens-4-ha', name: 'Teens 4 3rd Ed HA', color: '#168dc0' },
+  { id: 'teens-4', name: 'Teens 4 3rd Edition', color: '#238fbd' },
+  { id: 'teens-6', name: 'Teens 6 3rd Edition', color: '#39765e' },
+  { id: 'teens-8', name: 'Teens 8', color: '#c7751f' },
+  { id: 'teens-8-3rd', name: 'Teens 8 3rd Edition', color: '#a94f27' },
+  { id: 'w12', name: 'W12', color: '#91b866' },
+];
+const portalPages = ['home', 'biblioteca', 'grupos', 'turmas', 'calendario', 'painel', 'idioma'];
 const students = [
   { id: 1, name: 'Ana Paula Rocha', level: 'Teen 2' },
   { id: 2, name: 'Bruno Martins', level: 'Adults 4' },
@@ -66,6 +84,9 @@ let classes = [
 let selectedPage = 'home';
 let editingClassId = null;
 let draftStudentIds = [];
+let selectedClassId = null;
+let selectedStudentId = null;
+const lessonRecords = {};
 
 function createId() {
   if (globalThis.crypto && typeof globalThis.crypto.randomUUID === 'function') {
@@ -93,15 +114,44 @@ const studentOptions = document.getElementById('studentOptions');
 const selectedStudents = document.getElementById('selectedStudents');
 const weekdayGrid = document.getElementById('weekdayGrid');
 const saveClassButton = document.getElementById('saveClassButton');
+const classesOverview = document.getElementById('classesOverview');
+const classDetail = document.getElementById('classDetail');
+const studentRecord = document.getElementById('studentRecord');
+const homeClassesList = document.getElementById('homeClassesList');
+const homeLibrarySelect = document.getElementById('homeLibrarySelect');
+const librarySearch = document.getElementById('librarySearch');
+const libraryBooksContainer = document.getElementById('libraryBooks');
+const libraryEmpty = document.getElementById('libraryEmpty');
+const libraryFeedback = document.getElementById('libraryFeedback');
+let selectedLibraryBookId = null;
 
 function initialize() {
+  deduplicateNavigationItems();
   bindEvents();
   renderWeekdays();
   renderSelectOptions();
   syncPageWithHash();
   renderClasses();
+  renderHomeClasses();
+  renderLibrarySelect();
+  renderLibraryBooks();
   updateRoomFeedback();
   window.addEventListener('hashchange', syncPageWithHash);
+}
+
+function deduplicateNavigationItems() {
+  const seenPages = new Set();
+  document.querySelectorAll('.sidebar__nav [data-nav-id]').forEach((link) => {
+    if (seenPages.has(link.dataset.navId)) {
+      link.remove();
+      return;
+    }
+    seenPages.add(link.dataset.navId);
+    navMenu.appendChild(link);
+  });
+  document.querySelectorAll('.sidebar__nav').forEach((menu) => {
+    if (menu !== navMenu) menu.remove();
+  });
 }
 
 function bindEvents() {
@@ -111,12 +161,25 @@ function bindEvents() {
 
   document.getElementById('createClassButton').addEventListener('click', () => openModal());
   document.getElementById('emptyCreateButton').addEventListener('click', () => openModal());
-  document.getElementById('topbarTurmasButton').addEventListener('click', () => {
+  document.getElementById('topbarTurmasButton').addEventListener('click', (event) => {
+    event.preventDefault();
     navigateToPage('turmas');
   });
-  document.getElementById('heroTurmasButton').addEventListener('click', () => {
+  document.getElementById('heroTurmasButton').addEventListener('click', (event) => {
+    event.preventDefault();
     navigateToPage('turmas');
   });
+  document.getElementById('viewAllClassesButton').addEventListener('click', () => navigateToPage('turmas'));
+  document.getElementById('homeLibraryLink').addEventListener('click', (event) => {
+    event.preventDefault();
+    navigateToPage('biblioteca');
+  });
+  homeLibrarySelect.addEventListener('change', () => {
+    selectedLibraryBookId = homeLibrarySelect.value;
+    navigateToPage('biblioteca');
+    renderLibraryBooks();
+  });
+  librarySearch.addEventListener('input', renderLibraryBooks);
 
   document.getElementById('closeModal').addEventListener('click', closeModal);
   document.getElementById('cancelModal').addEventListener('click', closeModal);
@@ -134,10 +197,6 @@ function bindEvents() {
   navMenu.querySelectorAll('[data-nav-id]').forEach((link) => {
     link.addEventListener('click', (event) => {
       const pageId = link.dataset.navId;
-      if (pageId !== 'home' && pageId !== 'turmas') {
-        event.preventDefault();
-        return;
-      }
       event.preventDefault();
       navigateToPage(pageId);
       closeSidebar();
@@ -147,7 +206,7 @@ function bindEvents() {
 
 function syncPageWithHash() {
   const hashPage = window.location.hash.replace('#', '');
-  const nextPage = hashPage === 'turmas' ? 'turmas' : 'home';
+  const nextPage = portalPages.includes(hashPage) ? hashPage : 'home';
   selectPage(nextPage);
 }
 
@@ -160,6 +219,7 @@ function selectPage(pageId) {
   navMenu.querySelectorAll('[data-nav-id]').forEach((link) => {
     link.classList.toggle('is-active', link.dataset.navId === pageId);
   });
+  if (pageId !== 'turmas') showClassesOverview();
 }
 
 function navigateToPage(pageId) {
@@ -168,6 +228,58 @@ function navigateToPage(pageId) {
   if (window.location.hash !== nextHash) {
     window.location.hash = pageId;
   }
+}
+
+function renderLibrarySelect() {
+  homeLibrarySelect.innerHTML = '<option value="">Escolha um livro para abrir a biblioteca</option>';
+  libraryBooks.forEach((book) => {
+    const option = document.createElement('option');
+    option.value = book.id;
+    option.textContent = book.name;
+    homeLibrarySelect.appendChild(option);
+  });
+}
+
+function renderLibraryBooks() {
+  const term = librarySearch.value.trim().toLowerCase();
+  const filteredBooks = libraryBooks.filter((book) => book.name.toLowerCase().includes(term));
+  libraryBooksContainer.innerHTML = '';
+  libraryEmpty.classList.toggle('hidden', filteredBooks.length > 0);
+
+  filteredBooks.forEach((book) => {
+    const isOpen = book.id === selectedLibraryBookId;
+    const details = document.createElement('details');
+    details.className = 'library-book';
+    details.open = isOpen;
+    details.innerHTML = `
+      <summary class="library-book__button">
+        <span class="library-book__identity"><span class="library-book__cover" style="--book-color: ${book.color}">W</span><strong>${book.name}</strong></span>
+        <span class="library-book__chevron" aria-hidden="true">⌄</span>
+      </summary>
+      <div class="library-book__content" id="book-content-${book.id}">
+        <button type="button" class="library-resource" data-resource="Livro digital"><span>📖</span><span><strong>Livro digital</strong><small>Acessar conteúdo do aluno</small></span><b>→</b></button>
+        <button type="button" class="library-resource" data-resource="Áudios"><span>🎧</span><span><strong>Áudios</strong><small>Ouvir atividades e diálogos</small></span><b>→</b></button>
+        <button type="button" class="library-resource" data-resource="Recursos do professor"><span>📝</span><span><strong>Recursos do professor</strong><small>Materiais de apoio para a aula</small></span><b>→</b></button>
+      </div>`;
+    details.addEventListener('toggle', () => {
+      if (!details.open) {
+        if (selectedLibraryBookId === book.id) selectedLibraryBookId = null;
+        return;
+      }
+      selectedLibraryBookId = book.id;
+      homeLibrarySelect.value = book.id;
+    });
+    details.querySelectorAll('[data-resource]').forEach((button) => {
+      button.addEventListener('click', () => showLibraryResource(book.name, button.dataset.resource));
+    });
+    libraryBooksContainer.appendChild(details);
+  });
+}
+
+function showLibraryResource(bookName, resourceName) {
+  libraryFeedback.innerHTML = `<strong>${resourceName} — ${bookName}</strong><span>Recurso selecionado com sucesso. O conteúdo está pronto para ser acessado.</span>`;
+  libraryFeedback.classList.remove('hidden');
+  libraryFeedback.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
 }
 
 function renderSelectOptions() {
@@ -238,7 +350,7 @@ function renderClasses() {
   filtered.forEach((item) => {
     const room = findRoom(item.roomId);
     const article = document.createElement('article');
-    article.className = 'card class-card';
+    article.className = 'card class-card class-card--clickable';
     article.innerHTML = `
       <div class="class-card__header">
         <div>
@@ -262,16 +374,120 @@ function renderClasses() {
             .join('')}${item.studentIds.length > 3 ? `<span class="chip">+${item.studentIds.length - 3}</span>` : ''}</div>
           <div class="class-card__capacity">Capacidade da sala: ${room.capacity} lugares</div>
         </div>
-        <button class="secondary-button" data-edit-id="${item.id}">Editar turma</button>
+        <button class="primary-button class-card__open" data-open-id="${item.id}"><span>👥</span> Abrir turma e chamada <span aria-hidden="true">→</span></button>
       </div>
     `;
     classesList.appendChild(article);
   });
 
   classesList.querySelectorAll('[data-edit-id]').forEach((button) => {
-    button.addEventListener('click', () => openModal(button.dataset.editId));
+    button.addEventListener('click', (event) => {
+      event.stopPropagation();
+      openModal(button.dataset.editId);
+    });
+  });
+  classesList.querySelectorAll('.class-card').forEach((card) => {
+    const classId = card.querySelector('[data-open-id]').dataset.openId;
+    card.addEventListener('click', () => openClassDetail(classId));
   });
 }
+
+function renderHomeClasses() {
+  homeClassesList.innerHTML = classes.slice(0, 3).map((item) => `
+    <article class="card home-class-card">
+      <div><span class="tag">${item.modality}</span><h3>${item.name}</h3></div>
+      <div class="home-class-card__meta">🗓 ${formatWeekdays(item.weekdays)} · ${item.startTime}</div>
+      <div class="home-class-card__meta">👥 ${item.studentIds.length} aluno(s)</div>
+      <button class="primary-button class-card__open" type="button" data-home-class-id="${item.id}">👥 Abrir chamada e conceitos →</button>
+    </article>
+  `).join('');
+
+  homeClassesList.querySelectorAll('[data-home-class-id]').forEach((button) => {
+    button.addEventListener('click', () => {
+      navigateToPage('turmas');
+      openClassDetail(button.dataset.homeClassId);
+    });
+  });
+}
+
+function showClassesOverview() {
+  selectedClassId = null;
+  selectedStudentId = null;
+  classesOverview.classList.remove('hidden');
+  classDetail.classList.add('hidden');
+  studentRecord.classList.add('hidden');
+}
+
+function openClassDetail(classId) {
+  const item = classes.find((entry) => entry.id === classId);
+  if (!item) return;
+  selectedClassId = classId;
+  classesOverview.classList.add('hidden');
+  studentRecord.classList.add('hidden');
+  classDetail.classList.remove('hidden');
+  classDetail.innerHTML = `
+    <button class="breadcrumb-button" type="button" id="backToClasses">← Voltar para Turmas</button>
+    <div class="card detail-hero">
+      <div><span class="tag">${item.modality}</span><h1>${item.name}</h1><p>${formatWeekdays(item.weekdays)} · ${item.startTime} - ${item.endTime} · ${findRoom(item.roomId).name}</p></div>
+      <strong>${item.studentIds.length} aluno(s)</strong>
+    </div>
+    <div><div class="section-header"><div><span class="flow-step">PASSO 2 DE 3</span><h2>Selecione um aluno</h2><p>Clique no nome do aluno para abrir a ficha de presença e conceitos.</p></div></div>
+      <div class="student-list">${item.studentIds.length ? item.studentIds.map((id) => {
+        const student = findStudent(id);
+        return `<button class="student-row" type="button" data-student-id="${id}"><span><strong>${student.name}</strong><span>${student.level}</span></span><span class="student-row__action">Acessar aluno →</span></button>`;
+      }).join('') : '<div class="card empty-state"><h3>Nenhum aluno nesta turma</h3><p>Edite a turma para adicionar integrantes.</p></div>'}</div>
+    </div>`;
+  document.getElementById('backToClasses').addEventListener('click', showClassesOverview);
+  classDetail.querySelectorAll('[data-student-id]').forEach((button) => button.addEventListener('click', () => openStudentRecord(Number(button.dataset.studentId))));
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function openStudentRecord(studentId) {
+  const item = classes.find((entry) => entry.id === selectedClassId);
+  const student = findStudent(studentId);
+  if (!item || !student) return;
+  selectedStudentId = studentId;
+  classDetail.classList.add('hidden');
+  studentRecord.classList.remove('hidden');
+  renderStudentRecord(item, student);
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function recordKey(classId, studentId) { return `${classId}:${studentId}`; }
+
+function renderStudentRecord(item, student) {
+  const records = lessonRecords[recordKey(item.id, student.id)] || [];
+  const today = new Date().toISOString().slice(0, 10);
+  studentRecord.innerHTML = `
+    <button class="breadcrumb-button" type="button" id="backToStudents">← Voltar para alunos</button>
+    <div class="card detail-hero"><div><span class="tag">${student.level}</span><h1>${student.name}</h1><p>${item.name}</p></div></div>
+    <div class="card record-card"><span class="flow-step">PASSO 3 DE 3</span><h2>Presença e conceitos da aula</h2><form id="lessonForm" class="lesson-form">
+      <div class="lesson-info-grid"><div class="field-group"><label for="lessonDate">Data da aula</label><input class="lesson-date" id="lessonDate" type="date" value="${today}" required></div>
+      <div class="field-group"><span class="field-label">Presença</span><div class="attendance-options"><label class="attendance-option"><input type="radio" name="attendance" value="Presente" checked><span>✓ Presente</span></label><label class="attendance-option"><input type="radio" name="attendance" value="Ausente"><span>✕ Ausente</span></label><label class="attendance-option"><input type="radio" name="attendance" value="Justificada"><span>! Justificada</span></label></div></div></div>
+      <div><span class="field-label">Conceitos F.A.L.E.</span><div class="concept-legend"><span><b>R</b> Regular</span><span><b>B</b> Bom</span><span><b>MB</b> Muito bom</span><span><b>O</b> Ótimo</span></div><div class="fale-grid">
+        ${['F','A','L','E'].map((letter) => `<label class="fale-field"><strong>Conceito ${letter}</strong><small>Selecione o desempenho na aula</small><select name="concept${letter}" required><option value="" selected disabled>Selecionar</option><option value="R">R — Regular</option><option value="B">B — Bom</option><option value="MB">MB — Muito bom</option><option value="O">O — Ótimo</option></select></label>`).join('')}
+      </div></div><label class="field-group"><span class="field-label">Observações da aula</span><textarea class="lesson-notes" name="notes" placeholder="Registre comentários sobre o desempenho do aluno..."></textarea></label>
+      <div id="saveFeedback" class="save-feedback hidden" role="status"></div><div class="modal__actions"><button class="primary-button" type="submit">Salvar presença e conceitos</button></div>
+    </form></div>
+    <div class="card record-card"><h2>Histórico de aulas</h2><div class="history-list">${records.length ? records.map((record) => `<div class="history-row"><strong>${formatDate(record.date)}</strong><span>${record.attendance}</span><div class="history-row__concepts">F: ${record.concepts.F} · A: ${record.concepts.A} · L: ${record.concepts.L} · E: ${record.concepts.E}</div></div>`).join('') : '<p class="helper-text">Nenhum registro realizado para este aluno.</p>'}</div></div>`;
+  document.getElementById('backToStudents').addEventListener('click', () => openClassDetail(item.id));
+  document.getElementById('lessonForm').addEventListener('submit', (event) => saveLessonRecord(event, item, student));
+}
+
+function saveLessonRecord(event, item, student) {
+  event.preventDefault();
+  const form = event.currentTarget;
+  const data = new FormData(form);
+  const record = { date: document.getElementById('lessonDate').value, attendance: data.get('attendance'), concepts: { F: data.get('conceptF'), A: data.get('conceptA'), L: data.get('conceptL'), E: data.get('conceptE') }, notes: data.get('notes').trim() };
+  const key = recordKey(item.id, student.id);
+  lessonRecords[key] = [...(lessonRecords[key] || []).filter((entry) => entry.date !== record.date), record].sort((a, b) => b.date.localeCompare(a.date));
+  renderStudentRecord(item, student);
+  const feedback = document.getElementById('saveFeedback');
+  feedback.textContent = 'Presença e conceitos R/B/MB/O salvos com sucesso.';
+  feedback.classList.remove('hidden');
+}
+
+function formatDate(date) { return date.split('-').reverse().join('/'); }
 
 function renderSummary(filtered) {
   const totalStudents = new Set(filtered.flatMap((item) => item.studentIds)).size;
@@ -361,6 +577,7 @@ function handleSaveClass(event) {
   }
 
   renderClasses();
+  renderHomeClasses();
   closeModal();
   navigateToPage('turmas');
 }
