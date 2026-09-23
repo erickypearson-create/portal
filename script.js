@@ -273,6 +273,7 @@ function renderClasses() {
           <div class="class-card__capacity">Capacidade da sala: ${room.capacity} lugares</div>
         </div>
         <button class="primary-button class-card__open" data-open-id="${item.id}"><span>👥</span> Abrir turma e chamada <span aria-hidden="true">→</span></button>
+        <button class="secondary-button" data-open-id="${item.id}">Ver alunos</button>
       </div>
     `;
     classesList.appendChild(article);
@@ -330,6 +331,7 @@ function openClassDetail(classId) {
       <strong>${item.studentIds.length} aluno(s)</strong>
     </div>
     <div><div class="section-header"><div><span class="flow-step">PASSO 2 DE 3</span><h2>Selecione um aluno</h2><p>Clique no nome do aluno para abrir a ficha de presença e notas.</p></div></div>
+    <div><div class="section-header"><div><h2>ALUNOS DA TURMA</h2><p>Selecione um aluno para registrar presença e conceitos F.A.L.E.</p></div></div>
       <div class="student-list">${item.studentIds.length ? item.studentIds.map((id) => {
         const student = findStudent(id);
         return `<button class="student-row" type="button" data-student-id="${id}"><span><strong>${student.name}</strong><span>${student.level}</span></span><span class="student-row__action">Acessar aluno →</span></button>`;
@@ -360,6 +362,7 @@ function renderStudentRecord(item, student) {
     <button class="breadcrumb-button" type="button" id="backToStudents">← Voltar para alunos</button>
     <div class="card detail-hero"><div><span class="tag">${student.level}</span><h1>${student.name}</h1><p>${item.name}</p></div></div>
     <div class="card record-card"><span class="flow-step">PASSO 3 DE 3</span><h2>Presença e notas da aula</h2><form id="lessonForm" class="lesson-form">
+    <div class="card record-card"><h2>Registro da aula</h2><form id="lessonForm" class="lesson-form">
       <div class="lesson-info-grid"><div class="field-group"><label for="lessonDate">Data da aula</label><input class="lesson-date" id="lessonDate" type="date" value="${today}" required></div>
       <div class="field-group"><span class="field-label">Presença</span><div class="attendance-options"><label class="attendance-option"><input type="radio" name="attendance" value="Presente" checked><span>✓ Presente</span></label><label class="attendance-option"><input type="radio" name="attendance" value="Ausente"><span>✕ Ausente</span></label><label class="attendance-option"><input type="radio" name="attendance" value="Justificada"><span>! Justificada</span></label></div></div></div>
       <div><span class="field-label">Conceitos F.A.L.E. <small>(notas de 0 a 10)</small></span><div class="fale-grid">
