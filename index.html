@@ -7,7 +7,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet" />
-    <link rel="stylesheet" href="styles.css" />
+    <link rel="stylesheet" href="styles.css?v=10" />
   </head>
   <body>
     <div class="app-shell">
@@ -24,13 +24,13 @@
         </div>
 
         <nav class="sidebar__nav" id="navMenu">
-          <a href="#home" class="nav-item is-active" data-nav-id="home"><span class="nav-item__icon">⌂</span><span>Início</span></a>
-          <a href="#biblioteca" class="nav-item" data-nav-id="biblioteca"><span class="nav-item__icon">▣</span><span>Biblioteca</span></a>
-          <a href="#grupos" class="nav-item" data-nav-id="grupos"><span class="nav-item__icon">👥</span><span>Grupos</span></a>
-          <a href="#turmas" class="nav-item" data-nav-id="turmas"><span class="nav-item__icon">🧑‍🏫</span><span>Turmas</span></a>
-          <a href="#calendario" class="nav-item" data-nav-id="calendario"><span class="nav-item__icon">🗓</span><span>Calendário</span></a>
-          <a href="#painel" class="nav-item" data-nav-id="painel"><span class="nav-item__icon">◫</span><span>Painel</span></a>
-          <a href="#idioma" class="nav-item" data-nav-id="idioma"><span class="nav-item__icon">🌐</span><span>Idioma</span></a>
+          <a href="./index.html#home" class="nav-item is-active" data-nav-id="home"><span class="nav-item__icon">⌂</span><span>Início</span></a>
+          <a href="./index.html#biblioteca" class="nav-item" data-nav-id="biblioteca"><span class="nav-item__icon">▣</span><span>Biblioteca</span></a>
+          <a href="./index.html#grupos" class="nav-item" data-nav-id="grupos"><span class="nav-item__icon">👥</span><span>Grupos</span></a>
+          <a href="./index.html#turmas" class="nav-item" data-nav-id="turmas"><span class="nav-item__icon">🧑‍🏫</span><span>Turmas</span></a>
+          <a href="./index.html#calendario" class="nav-item" data-nav-id="calendario"><span class="nav-item__icon">🗓</span><span>Calendário</span></a>
+          <a href="./index.html#painel" class="nav-item" data-nav-id="painel"><span class="nav-item__icon">◫</span><span>Painel</span></a>
+          <a href="./index.html#idioma" class="nav-item" data-nav-id="idioma"><span class="nav-item__icon">🌐</span><span>Idioma</span></a>
         </nav>
 
         <div class="sidebar__footer">
@@ -55,12 +55,12 @@
             </div>
           </div>
           <div class="topbar__actions">
-            <button class="secondary-button topbar__link" id="topbarTurmasButton">Turmas</button>
+            <a href="./index.html#turmas" class="secondary-button topbar__link" id="topbarTurmasButton">Turmas</a>
             <div class="topbar__avatar">G</div>
           </div>
         </header>
 
-        <section class="page page--active" data-page="home" id="homePage">
+        <section class="page page--active" data-page="home" id="home">
           <section class="hero card">
             <div class="hero__identity">
               <div class="hero__avatar">G</div>
@@ -73,8 +73,20 @@
               <span class="tag">CONNECTIONS</span>
               <span class="tag">INTERACTIVE</span>
               <span class="tag">CONNECT_AND_LEARN</span>
-              <button class="secondary-button hero__action" id="heroTurmasButton">Ir para Turmas</button>
+              <a href="./index.html#turmas" class="secondary-button hero__action" id="heroTurmasButton">Ir para Turmas</a>
             </div>
+          </section>
+
+          <section class="home-classes" aria-labelledby="homeClassesTitle">
+            <div class="section-header">
+              <div>
+                <span class="flow-step">ACESSO RÁPIDO</span>
+                <h2 id="homeClassesTitle">MINHAS TURMAS E CHAMADA</h2>
+                <p>Abra uma turma para acessar os alunos, dar presença e lançar os conceitos F.A.L.E.</p>
+              </div>
+              <button class="secondary-button" id="viewAllClassesButton">Ver todas as turmas →</button>
+            </div>
+            <div id="homeClassesList" class="home-classes__grid"></div>
           </section>
 
           <section class="section-header">
@@ -130,10 +142,13 @@
             <div>
               <section class="section-header">
                 <h2>BIBLIOTECA</h2>
-                <a href="#" class="section-link">Biblioteca →</a>
+                <a href="./index.html#biblioteca" class="section-link" id="homeLibraryLink">Biblioteca →</a>
               </section>
               <div class="card library-card">
-                <div class="select-display">Selecionar um Curso <span>▾</span></div>
+                <label class="field-label" for="homeLibrarySelect">Selecionar um livro</label>
+                <select class="library-select" id="homeLibrarySelect">
+                  <option value="">Escolha um livro para abrir a biblioteca</option>
+                </select>
               </div>
             </div>
           </section>
@@ -169,13 +184,48 @@
           </section>
         </section>
 
-        <section class="page" data-page="turmas" id="classesPage">
+        <section class="page" data-page="biblioteca" id="biblioteca">
+          <section class="section-header section-header--page">
+            <div>
+              <span class="flow-step">MATERIAIS DIDÁTICOS</span>
+              <h1>Biblioteca</h1>
+              <p>Selecione um livro para visualizar os materiais e recursos disponíveis.</p>
+            </div>
+          </section>
+
+          <section class="card library-search-card">
+            <div class="search-field">
+              <span>⌕</span>
+              <input id="librarySearch" type="search" placeholder="Buscar livro pelo nome" aria-label="Buscar livro pelo nome" />
+            </div>
+          </section>
+
+          <section id="libraryBooks" class="library-books" aria-live="polite"></section>
+          <div id="libraryFeedback" class="library-feedback hidden" role="status"></div>
+          <section id="libraryEmpty" class="card empty-state hidden">
+            <div class="empty-state__icon">📚</div>
+            <h3>Nenhum livro encontrado</h3>
+            <p>Tente buscar usando outro nome.</p>
+          </section>
+        </section>
+
+        <section class="page" data-page="turmas" id="turmas">
+          <div id="classesOverview">
           <section class="section-header section-header--page">
             <div>
               <h1>Turmas</h1>
               <p>Gerencie as suas turmas, horários e integrantes dentro do mesmo fluxo do portal.</p>
             </div>
             <button class="primary-button" id="createClassButton">Criar Turma</button>
+          </section>
+
+          <section class="classes-callout" aria-label="Como registrar uma aula">
+            <div class="classes-callout__icon">✓</div>
+            <div>
+              <span class="flow-step">PASSO 1 DE 3</span>
+              <strong>Faça a chamada e lance os conceitos da aula</strong>
+              <p>Clique em <b>Abrir turma e chamada</b>, escolha um aluno e registre presença e conceitos F.A.L.E.</p>
+            </div>
           </section>
 
           <section class="card filters-card">
@@ -199,6 +249,30 @@
             <p>Crie a primeira turma para organizar dias, horários e alunos no portal.</p>
             <button class="primary-button" id="emptyCreateButton">Criar Turma</button>
           </section>
+          </div>
+
+          <section id="classDetail" class="detail-view hidden" aria-live="polite"></section>
+          <section id="studentRecord" class="detail-view hidden" aria-live="polite"></section>
+        </section>
+
+        <section class="page" data-page="grupos" id="grupos">
+          <section class="section-header section-header--page"><div><h1>Grupos</h1><p>Acompanhe os grupos e seus integrantes.</p></div></section>
+          <section class="card simple-page-card"><span class="simple-page-card__icon">👥</span><div><h2>Seus grupos</h2><p>Os grupos cadastrados estão disponíveis na página inicial do portal.</p><a class="primary-button" href="./index.html#home">Ver grupos na página inicial</a></div></section>
+        </section>
+
+        <section class="page" data-page="calendario" id="calendario">
+          <section class="section-header section-header--page"><div><h1>Calendário</h1><p>Consulte a programação das suas aulas.</p></div></section>
+          <section class="card simple-page-card"><span class="simple-page-card__icon">🗓</span><div><h2>Agenda de aulas</h2><p>Use a agenda da página inicial para acompanhar os próximos horários.</p><a class="primary-button" href="./index.html#home">Abrir agenda</a></div></section>
+        </section>
+
+        <section class="page" data-page="painel" id="painel">
+          <section class="section-header section-header--page"><div><h1>Painel</h1><p>Visualize um resumo do desempenho das suas turmas.</p></div></section>
+          <section class="card simple-page-card"><span class="simple-page-card__icon">◫</span><div><h2>Visão geral</h2><p>Os principais indicadores estão disponíveis na página inicial.</p><a class="primary-button" href="./index.html#home">Ver indicadores</a></div></section>
+        </section>
+
+        <section class="page" data-page="idioma" id="idioma">
+          <section class="section-header section-header--page"><div><h1>Idioma</h1><p>Defina o idioma utilizado no portal.</p></div></section>
+          <section class="card simple-page-card"><span class="simple-page-card__icon">🌐</span><div><h2>Português (Brasil)</h2><p>Este é o idioma ativo para a sua conta.</p><button class="secondary-button" type="button" disabled>Idioma selecionado</button></div></section>
         </section>
       </main>
     </div>
@@ -267,6 +341,6 @@
       </div>
     </div>
 
-    <script src="script.js"></script>
+    <script src="script.js?v=10"></script>
   </body>
 </html>
