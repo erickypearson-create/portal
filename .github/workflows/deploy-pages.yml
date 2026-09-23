@@ -1,0 +1,44 @@
+name: Publicar portal no GitHub Pages
+
+on:
+  push:
+    branches:
+      - main
+      - master
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: true
+
+jobs:
+  deploy:
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Baixar o código
+        uses: actions/checkout@v4
+
+      - name: Configurar o GitHub Pages
+        uses: actions/configure-pages@v5
+
+      - name: Preparar os arquivos do portal
+        run: |
+          mkdir _site
+          cp index.html turmas.html biblioteca.html script.js styles.css .nojekyll _site/
+
+      - name: Enviar os arquivos do portal
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: ./_site
+
+      - name: Publicar o portal
+        id: deployment
+        uses: actions/deploy-pages@v4
