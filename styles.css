@@ -24,6 +24,7 @@ body {
 button, input, select { font: inherit; }
 button { cursor: pointer; }
 .secondary-button { text-decoration: none; display: inline-flex; align-items: center; justify-content: center; }
+.primary-button { text-decoration: none; display: inline-flex; align-items: center; justify-content: center; }
 .hidden { display: none !important; }
 
 .app-shell { min-height: 100vh; display: flex; }
@@ -361,6 +362,10 @@ body:has(.page:target) .page--active:not(:target) { display: none; }
 .library-resource small { color: var(--muted); margin-top: 3px; }
 .library-feedback { position: sticky; bottom: 18px; margin-top: 16px; padding: 14px 18px; border-radius: 12px; background: var(--primary); color: #fff; box-shadow: 0 12px 30px rgba(17, 38, 123, .25); display: grid; gap: 2px; }
 .library-feedback span { font-size: 14px; opacity: .85; }
+.simple-page-card { padding: 30px; display: flex; align-items: center; gap: 22px; }
+.simple-page-card h2 { color: var(--primary); margin: 0 0 6px; }
+.simple-page-card p { color: var(--muted); margin: 0 0 18px; }
+.simple-page-card__icon { width: 72px; height: 72px; flex: 0 0 72px; border-radius: 18px; display: grid; place-items: center; background: #edf6ff; font-size: 32px; }
 
 .modal { position: fixed; inset: 0; z-index: 40; display: grid; place-items: center; }
 .modal__backdrop { position: absolute; inset: 0; background: rgba(31, 39, 67, 0.45); }
@@ -420,4 +425,5 @@ body:has(.page:target) .page--active:not(:target) { display: none; }
   .classes-callout { align-items: flex-start; }
   .library-book__content { grid-template-columns: 1fr; padding: 0 14px 14px; }
   .library-book__button { padding: 14px; }
+  .simple-page-card { align-items: flex-start; flex-direction: column; }
 }

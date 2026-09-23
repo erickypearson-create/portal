@@ -31,6 +31,7 @@ const libraryBooks = [
   { id: 'teens-8-3rd', name: 'Teens 8 3rd Edition', color: '#a94f27' },
   { id: 'w12', name: 'W12', color: '#91b866' },
 ];
+const portalPages = ['home', 'biblioteca', 'grupos', 'turmas', 'calendario', 'painel', 'idioma'];
 const students = [
   { id: 1, name: 'Ana Paula Rocha', level: 'Teen 2' },
   { id: 2, name: 'Bruno Martins', level: 'Adults 4' },
@@ -125,6 +126,7 @@ const libraryFeedback = document.getElementById('libraryFeedback');
 let selectedLibraryBookId = null;
 
 function initialize() {
+  deduplicateNavigationItems();
   bindEvents();
   renderWeekdays();
   renderSelectOptions();
@@ -135,6 +137,21 @@ function initialize() {
   renderLibraryBooks();
   updateRoomFeedback();
   window.addEventListener('hashchange', syncPageWithHash);
+}
+
+function deduplicateNavigationItems() {
+  const seenPages = new Set();
+  document.querySelectorAll('.sidebar__nav [data-nav-id]').forEach((link) => {
+    if (seenPages.has(link.dataset.navId)) {
+      link.remove();
+      return;
+    }
+    seenPages.add(link.dataset.navId);
+    navMenu.appendChild(link);
+  });
+  document.querySelectorAll('.sidebar__nav').forEach((menu) => {
+    if (menu !== navMenu) menu.remove();
+  });
 }
 
 function bindEvents() {
@@ -193,6 +210,7 @@ function bindEvents() {
 
 function syncPageWithHash() {
   const hashPage = window.location.hash.replace('#', '');
+  const nextPage = portalPages.includes(hashPage) ? hashPage : 'home';
   const nextPage = ['turmas', 'biblioteca'].includes(hashPage) ? hashPage : 'home';
   selectPage(nextPage);
 }

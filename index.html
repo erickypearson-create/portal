@@ -7,6 +7,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="styles.css?v=9" />
     <link rel="stylesheet" href="styles.css?v=8" />
     <link rel="stylesheet" href="styles.css?v=7" />
     <link rel="stylesheet" href="styles.css?v=6" />
@@ -31,6 +32,11 @@
         <nav class="sidebar__nav" id="navMenu">
           <a href="./index.html#home" class="nav-item is-active" data-nav-id="home"><span class="nav-item__icon">⌂</span><span>Início</span></a>
           <a href="./index.html#biblioteca" class="nav-item" data-nav-id="biblioteca"><span class="nav-item__icon">▣</span><span>Biblioteca</span></a>
+          <a href="./index.html#grupos" class="nav-item" data-nav-id="grupos"><span class="nav-item__icon">👥</span><span>Grupos</span></a>
+          <a href="./index.html#turmas" class="nav-item" data-nav-id="turmas"><span class="nav-item__icon">🧑‍🏫</span><span>Turmas</span></a>
+          <a href="./index.html#calendario" class="nav-item" data-nav-id="calendario"><span class="nav-item__icon">🗓</span><span>Calendário</span></a>
+          <a href="./index.html#painel" class="nav-item" data-nav-id="painel"><span class="nav-item__icon">◫</span><span>Painel</span></a>
+          <a href="./index.html#idioma" class="nav-item" data-nav-id="idioma"><span class="nav-item__icon">🌐</span><span>Idioma</span></a>
           <a href="#grupos" class="nav-item" data-nav-id="grupos"><span class="nav-item__icon">👥</span><span>Grupos</span></a>
           <a href="./index.html#turmas" class="nav-item" data-nav-id="turmas"><span class="nav-item__icon">🧑‍🏫</span><span>Turmas</span></a>
           <a href="#home" class="nav-item is-active" data-nav-id="home"><span class="nav-item__icon">⌂</span><span>Início</span></a>
@@ -271,6 +277,26 @@
           <section id="classDetail" class="detail-view hidden" aria-live="polite"></section>
           <section id="studentRecord" class="detail-view hidden" aria-live="polite"></section>
         </section>
+
+        <section class="page" data-page="grupos" id="grupos">
+          <section class="section-header section-header--page"><div><h1>Grupos</h1><p>Acompanhe os grupos e seus integrantes.</p></div></section>
+          <section class="card simple-page-card"><span class="simple-page-card__icon">👥</span><div><h2>Seus grupos</h2><p>Os grupos cadastrados estão disponíveis na página inicial do portal.</p><a class="primary-button" href="./index.html#home">Ver grupos na página inicial</a></div></section>
+        </section>
+
+        <section class="page" data-page="calendario" id="calendario">
+          <section class="section-header section-header--page"><div><h1>Calendário</h1><p>Consulte a programação das suas aulas.</p></div></section>
+          <section class="card simple-page-card"><span class="simple-page-card__icon">🗓</span><div><h2>Agenda de aulas</h2><p>Use a agenda da página inicial para acompanhar os próximos horários.</p><a class="primary-button" href="./index.html#home">Abrir agenda</a></div></section>
+        </section>
+
+        <section class="page" data-page="painel" id="painel">
+          <section class="section-header section-header--page"><div><h1>Painel</h1><p>Visualize um resumo do desempenho das suas turmas.</p></div></section>
+          <section class="card simple-page-card"><span class="simple-page-card__icon">◫</span><div><h2>Visão geral</h2><p>Os principais indicadores estão disponíveis na página inicial.</p><a class="primary-button" href="./index.html#home">Ver indicadores</a></div></section>
+        </section>
+
+        <section class="page" data-page="idioma" id="idioma">
+          <section class="section-header section-header--page"><div><h1>Idioma</h1><p>Defina o idioma utilizado no portal.</p></div></section>
+          <section class="card simple-page-card"><span class="simple-page-card__icon">🌐</span><div><h2>Português (Brasil)</h2><p>Este é o idioma ativo para a sua conta.</p><button class="secondary-button" type="button" disabled>Idioma selecionado</button></div></section>
+        </section>
       </main>
     </div>
 
@@ -338,6 +364,7 @@
       </div>
     </div>
 
+    <script src="script.js?v=9"></script>
     <script src="script.js?v=8"></script>
     <script src="script.js?v=7"></script>
     <script src="script.js?v=6"></script>
