@@ -163,12 +163,14 @@ function bindEvents() {
   document.getElementById('emptyCreateButton').addEventListener('click', () => openModal());
   document.getElementById('topbarTurmasButton').addEventListener('click', closeSidebar);
   document.getElementById('heroTurmasButton').addEventListener('click', closeSidebar);
+  document.getElementById('viewAllClassesButton').addEventListener('click', closeSidebar);
   document.getElementById('viewAllClassesButton').addEventListener('click', () => navigateToPage('turmas'));
   document.getElementById('homeLibraryLink').addEventListener('click', closeSidebar);
   homeLibrarySelect.addEventListener('change', () => {
     selectedLibraryBookId = homeLibrarySelect.value;
     navigateToPage('biblioteca');
     renderLibraryBooks();
+  });
   });
   document.getElementById('topbarTurmasButton').addEventListener('click', (event) => {
     event.preventDefault();
