@@ -83,6 +83,14 @@ button { cursor: pointer; }
   flex-direction: column;
   gap: 8px;
 }
+.sidebar .sidebar__nav:not(#navMenu) { display: none !important; }
+#navMenu [data-nav-id="home"] ~ [data-nav-id="home"],
+#navMenu [data-nav-id="biblioteca"] ~ [data-nav-id="biblioteca"],
+#navMenu [data-nav-id="grupos"] ~ [data-nav-id="grupos"],
+#navMenu [data-nav-id="turmas"] ~ [data-nav-id="turmas"],
+#navMenu [data-nav-id="calendario"] ~ [data-nav-id="calendario"],
+#navMenu [data-nav-id="painel"] ~ [data-nav-id="painel"],
+#navMenu [data-nav-id="idioma"] ~ [data-nav-id="idioma"] { display: none !important; }
 .sidebar__footer { margin-top: auto; padding-top: 12px; }
 
 .nav-item {

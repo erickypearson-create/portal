@@ -161,6 +161,15 @@ function bindEvents() {
 
   document.getElementById('createClassButton').addEventListener('click', () => openModal());
   document.getElementById('emptyCreateButton').addEventListener('click', () => openModal());
+  document.getElementById('topbarTurmasButton').addEventListener('click', closeSidebar);
+  document.getElementById('heroTurmasButton').addEventListener('click', closeSidebar);
+  document.getElementById('viewAllClassesButton').addEventListener('click', () => navigateToPage('turmas'));
+  document.getElementById('homeLibraryLink').addEventListener('click', closeSidebar);
+  homeLibrarySelect.addEventListener('change', () => {
+    selectedLibraryBookId = homeLibrarySelect.value;
+    navigateToPage('biblioteca');
+    renderLibraryBooks();
+  });
   document.getElementById('topbarTurmasButton').addEventListener('click', (event) => {
     event.preventDefault();
     navigateToPage('turmas');
@@ -195,6 +204,7 @@ function bindEvents() {
   weekdayGrid.addEventListener('change', updateRoomFeedback);
 
   navMenu.querySelectorAll('[data-nav-id]').forEach((link) => {
+    link.addEventListener('click', closeSidebar);
     link.addEventListener('click', (event) => {
       const pageId = link.dataset.navId;
       if (!['home', 'turmas', 'biblioteca'].includes(pageId)) {
