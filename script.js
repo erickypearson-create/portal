@@ -164,7 +164,28 @@ function bindEvents() {
   document.getElementById('topbarTurmasButton').addEventListener('click', closeSidebar);
   document.getElementById('heroTurmasButton').addEventListener('click', closeSidebar);
   document.getElementById('viewAllClassesButton').addEventListener('click', closeSidebar);
+  document.getElementById('viewAllClassesButton').addEventListener('click', () => navigateToPage('turmas'));
   document.getElementById('homeLibraryLink').addEventListener('click', closeSidebar);
+  homeLibrarySelect.addEventListener('change', () => {
+    selectedLibraryBookId = homeLibrarySelect.value;
+    navigateToPage('biblioteca');
+    renderLibraryBooks();
+  });
+  });
+  });
+  document.getElementById('topbarTurmasButton').addEventListener('click', (event) => {
+    event.preventDefault();
+    navigateToPage('turmas');
+  });
+  document.getElementById('heroTurmasButton').addEventListener('click', (event) => {
+    event.preventDefault();
+    navigateToPage('turmas');
+  });
+  document.getElementById('viewAllClassesButton').addEventListener('click', () => navigateToPage('turmas'));
+  document.getElementById('homeLibraryLink').addEventListener('click', (event) => {
+    event.preventDefault();
+    navigateToPage('biblioteca');
+  });
   homeLibrarySelect.addEventListener('change', () => {
     selectedLibraryBookId = homeLibrarySelect.value;
     navigateToPage('biblioteca');
@@ -187,12 +208,23 @@ function bindEvents() {
 
   navMenu.querySelectorAll('[data-nav-id]').forEach((link) => {
     link.addEventListener('click', closeSidebar);
+    link.addEventListener('click', (event) => {
+      const pageId = link.dataset.navId;
+      if (!['home', 'turmas', 'biblioteca'].includes(pageId)) {
+        event.preventDefault();
+        return;
+      }
+      event.preventDefault();
+      navigateToPage(pageId);
+      closeSidebar();
+    });
   });
 }
 
 function syncPageWithHash() {
   const hashPage = window.location.hash.replace('#', '');
   const nextPage = portalPages.includes(hashPage) ? hashPage : 'home';
+  const nextPage = ['turmas', 'biblioteca'].includes(hashPage) ? hashPage : 'home';
   selectPage(nextPage);
 }
 
@@ -266,6 +298,29 @@ function showLibraryResource(bookName, resourceName) {
   libraryFeedback.innerHTML = `<strong>${resourceName} — ${bookName}</strong><span>Recurso selecionado com sucesso. O conteúdo está pronto para ser acessado.</span>`;
   libraryFeedback.classList.remove('hidden');
   libraryFeedback.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
+    const article = document.createElement('article');
+    article.className = `library-book ${isOpen ? 'is-open' : ''}`;
+    article.innerHTML = `
+      <button class="library-book__button" type="button" aria-expanded="${isOpen}" aria-controls="book-content-${book.id}">
+        <span class="library-book__identity"><span class="library-book__cover" style="--book-color: ${book.color}">W</span><strong>${book.name}</strong></span>
+        <span class="library-book__chevron" aria-hidden="true">⌄</span>
+      </button>
+      <div class="library-book__content ${isOpen ? '' : 'hidden'}" id="book-content-${book.id}">
+        <button type="button" class="library-resource"><span>📖</span><span><strong>Livro digital</strong><small>Acessar conteúdo do aluno</small></span><b>→</b></button>
+        <button type="button" class="library-resource"><span>🎧</span><span><strong>Áudios</strong><small>Ouvir atividades e diálogos</small></span><b>→</b></button>
+        <button type="button" class="library-resource"><span>📝</span><span><strong>Recursos do professor</strong><small>Materiais de apoio para a aula</small></span><b>→</b></button>
+      </div>`;
+    article.querySelector('.library-book__button').addEventListener('click', () => {
+      selectedLibraryBookId = isOpen ? null : book.id;
+      homeLibrarySelect.value = selectedLibraryBookId || '';
+      renderLibraryBooks();
+    });
+    libraryBooksContainer.appendChild(article);
+  });
+
+  if (selectedLibraryBookId) {
+    requestAnimationFrame(() => document.getElementById(`book-content-${selectedLibraryBookId}`)?.scrollIntoView({ block: 'nearest', behavior: 'smooth' }));
+  }
 }
 
 function renderSelectOptions() {
@@ -361,6 +416,7 @@ function renderClasses() {
           <div class="class-card__capacity">Capacidade da sala: ${room.capacity} lugares</div>
         </div>
         <button class="primary-button class-card__open" data-open-id="${item.id}"><span>👥</span> Abrir turma e chamada <span aria-hidden="true">→</span></button>
+        <button class="secondary-button" data-open-id="${item.id}">Ver alunos</button>
       </div>
     `;
     classesList.appendChild(article);
@@ -370,6 +426,107 @@ function renderClasses() {
     button.addEventListener('click', (event) => {
       event.stopPropagation();
       openModal(button.dataset.editId);
+    });
+  });
+  classesList.querySelectorAll('.class-card').forEach((card) => {
+    const classId = card.querySelector('[data-open-id]').dataset.openId;
+    card.addEventListener('click', () => openClassDetail(classId));
+  });
+}
+
+function renderHomeClasses() {
+  homeClassesList.innerHTML = classes.slice(0, 3).map((item) => `
+    <article class="card home-class-card">
+      <div><span class="tag">${item.modality}</span><h3>${item.name}</h3></div>
+      <div class="home-class-card__meta">🗓 ${formatWeekdays(item.weekdays)} · ${item.startTime}</div>
+      <div class="home-class-card__meta">👥 ${item.studentIds.length} aluno(s)</div>
+      <button class="primary-button class-card__open" type="button" data-home-class-id="${item.id}">👥 Abrir chamada e conceitos →</button>
+    </article>
+  `).join('');
+
+  homeClassesList.querySelectorAll('[data-home-class-id]').forEach((button) => {
+    button.addEventListener('click', () => {
+      navigateToPage('turmas');
+      openClassDetail(button.dataset.homeClassId);
+    });
+  classesList.querySelectorAll('.class-card').forEach((card) => {
+    const classId = card.querySelector('[data-open-id]').dataset.openId;
+    card.addEventListener('click', () => openClassDetail(classId));
+  });
+  classesList.querySelectorAll('.class-card').forEach((card) => {
+    const classId = card.querySelector('[data-open-id]').dataset.openId;
+    card.addEventListener('click', () => openClassDetail(classId));
+  });
+  classesList.querySelectorAll('.class-card').forEach((card) => {
+    const classId = card.querySelector('[data-open-id]').dataset.openId;
+    card.addEventListener('click', () => openClassDetail(classId));
+  });
+}
+
+function renderHomeClasses() {
+  homeClassesList.innerHTML = classes.slice(0, 3).map((item) => `
+    <article class="card home-class-card">
+      <div><span class="tag">${item.modality}</span><h3>${item.name}</h3></div>
+      <div class="home-class-card__meta">🗓 ${formatWeekdays(item.weekdays)} · ${item.startTime}</div>
+      <div class="home-class-card__meta">👥 ${item.studentIds.length} aluno(s)</div>
+      <button class="primary-button class-card__open" type="button" data-home-class-id="${item.id}">👥 Abrir chamada e conceitos →</button>
+    </article>
+  `).join('');
+
+  homeClassesList.querySelectorAll('[data-home-class-id]').forEach((button) => {
+    button.addEventListener('click', () => {
+      navigateToPage('turmas');
+      openClassDetail(button.dataset.homeClassId);
+    });
+  });
+}
+
+function showClassesOverview() {
+  selectedClassId = null;
+  selectedStudentId = null;
+  classesOverview.classList.remove('hidden');
+  classDetail.classList.add('hidden');
+  studentRecord.classList.add('hidden');
+}
+
+function openClassDetail(classId) {
+  const item = classes.find((entry) => entry.id === classId);
+  if (!item) return;
+  selectedClassId = classId;
+  classesOverview.classList.add('hidden');
+  studentRecord.classList.add('hidden');
+  classDetail.classList.remove('hidden');
+  classDetail.innerHTML = `
+    <button class="breadcrumb-button" type="button" id="backToClasses">← Voltar para Turmas</button>
+    <div class="card detail-hero">
+      <div><span class="tag">${item.modality}</span><h1>${item.name}</h1><p>${formatWeekdays(item.weekdays)} · ${item.startTime} - ${item.endTime} · ${findRoom(item.roomId).name}</p></div>
+      <strong>${item.studentIds.length} aluno(s)</strong>
+    </div>
+    <div><div class="section-header"><div><span class="flow-step">PASSO 2 DE 3</span><h2>Selecione um aluno</h2><p>Clique no nome do aluno para abrir a ficha de presença e conceitos.</p></div></div>
+      <div class="student-list">${item.studentIds.length ? item.studentIds.map((id) => {
+        const student = findStudent(id);
+        return `<button class="student-row" type="button" data-student-id="${id}"><span><strong>${student.name}</strong><span>${student.level}</span></span><span class="student-row__action">Acessar aluno →</span></button>`;
+      }).join('') : '<div class="card empty-state"><h3>Nenhum aluno nesta turma</h3><p>Edite a turma para adicionar integrantes.</p></div>'}</div>
+    </div>`;
+  document.getElementById('backToClasses').addEventListener('click', showClassesOverview);
+  classDetail.querySelectorAll('[data-student-id]').forEach((button) => button.addEventListener('click', () => openStudentRecord(Number(button.dataset.studentId))));
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function renderHomeClasses() {
+  homeClassesList.innerHTML = classes.slice(0, 3).map((item) => `
+    <article class="card home-class-card">
+      <div><span class="tag">${item.modality}</span><h3>${item.name}</h3></div>
+      <div class="home-class-card__meta">🗓 ${formatWeekdays(item.weekdays)} · ${item.startTime}</div>
+      <div class="home-class-card__meta">👥 ${item.studentIds.length} aluno(s)</div>
+      <button class="primary-button class-card__open" type="button" data-home-class-id="${item.id}">👥 Abrir chamada e conceitos →</button>
+    </article>
+  `).join('');
+
+  homeClassesList.querySelectorAll('[data-home-class-id]').forEach((button) => {
+    button.addEventListener('click', () => {
+      navigateToPage('turmas');
+      openClassDetail(button.dataset.homeClassId);
     });
   });
   classesList.querySelectorAll('.class-card').forEach((card) => {
@@ -428,6 +585,141 @@ function openClassDetail(classId) {
   window.scrollTo({ top: 0, behavior: 'smooth' });
 }
 
+function showClassesOverview() {
+  selectedClassId = null;
+  selectedStudentId = null;
+  classesOverview.classList.remove('hidden');
+  classDetail.classList.add('hidden');
+  studentRecord.classList.add('hidden');
+}
+
+function openClassDetail(classId) {
+  const item = classes.find((entry) => entry.id === classId);
+  if (!item) return;
+  selectedClassId = classId;
+  classesOverview.classList.add('hidden');
+  studentRecord.classList.add('hidden');
+  classDetail.classList.remove('hidden');
+  classDetail.innerHTML = `
+    <button class="breadcrumb-button" type="button" id="backToClasses">← Voltar para Turmas</button>
+    <div class="card detail-hero">
+      <div><span class="tag">${item.modality}</span><h1>${item.name}</h1><p>${formatWeekdays(item.weekdays)} · ${item.startTime} - ${item.endTime} · ${findRoom(item.roomId).name}</p></div>
+      <strong>${item.studentIds.length} aluno(s)</strong>
+    </div>
+    <div><div class="section-header"><div><span class="flow-step">PASSO 2 DE 3</span><h2>Selecione um aluno</h2><p>Clique no nome do aluno para abrir a ficha de presença e conceitos.</p></div></div>
+      <div class="student-list">${item.studentIds.length ? item.studentIds.map((id) => {
+        const student = findStudent(id);
+        return `<button class="student-row" type="button" data-student-id="${id}"><span><strong>${student.name}</strong><span>${student.level}</span></span><span class="student-row__action">Acessar aluno →</span></button>`;
+      }).join('') : '<div class="card empty-state"><h3>Nenhum aluno nesta turma</h3><p>Edite a turma para adicionar integrantes.</p></div>'}</div>
+    </div>`;
+  document.getElementById('backToClasses').addEventListener('click', showClassesOverview);
+  classDetail.querySelectorAll('[data-student-id]').forEach((button) => button.addEventListener('click', () => openStudentRecord(Number(button.dataset.studentId))));
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function renderHomeClasses() {
+  homeClassesList.innerHTML = classes.slice(0, 3).map((item) => `
+    <article class="card home-class-card">
+      <div><span class="tag">${item.modality}</span><h3>${item.name}</h3></div>
+      <div class="home-class-card__meta">🗓 ${formatWeekdays(item.weekdays)} · ${item.startTime}</div>
+      <div class="home-class-card__meta">👥 ${item.studentIds.length} aluno(s)</div>
+      <button class="primary-button class-card__open" type="button" data-home-class-id="${item.id}">👥 Abrir chamada e conceitos →</button>
+    </article>
+  `).join('');
+
+  homeClassesList.querySelectorAll('[data-home-class-id]').forEach((button) => {
+    button.addEventListener('click', () => {
+      navigateToPage('turmas');
+      openClassDetail(button.dataset.homeClassId);
+    });
+  });
+}
+
+function showClassesOverview() {
+  selectedClassId = null;
+  selectedStudentId = null;
+  classesOverview.classList.remove('hidden');
+  classDetail.classList.add('hidden');
+  studentRecord.classList.add('hidden');
+}
+
+function openClassDetail(classId) {
+  const item = classes.find((entry) => entry.id === classId);
+  if (!item) return;
+  selectedClassId = classId;
+  classesOverview.classList.add('hidden');
+  studentRecord.classList.add('hidden');
+  classDetail.classList.remove('hidden');
+  classDetail.innerHTML = `
+    <button class="breadcrumb-button" type="button" id="backToClasses">← Voltar para Turmas</button>
+    <div class="card detail-hero">
+      <div><span class="tag">${item.modality}</span><h1>${item.name}</h1><p>${formatWeekdays(item.weekdays)} · ${item.startTime} - ${item.endTime} · ${findRoom(item.roomId).name}</p></div>
+      <strong>${item.studentIds.length} aluno(s)</strong>
+    </div>
+    <div><div class="section-header"><div><span class="flow-step">PASSO 2 DE 3</span><h2>Selecione um aluno</h2><p>Clique no nome do aluno para abrir a ficha de presença e conceitos.</p></div></div>
+      <div class="student-list">${item.studentIds.length ? item.studentIds.map((id) => {
+        const student = findStudent(id);
+        return `<button class="student-row" type="button" data-student-id="${id}"><span><strong>${student.name}</strong><span>${student.level}</span></span><span class="student-row__action">Acessar aluno →</span></button>`;
+      }).join('') : '<div class="card empty-state"><h3>Nenhum aluno nesta turma</h3><p>Edite a turma para adicionar integrantes.</p></div>'}</div>
+    </div>`;
+  document.getElementById('backToClasses').addEventListener('click', showClassesOverview);
+  classDetail.querySelectorAll('[data-student-id]').forEach((button) => button.addEventListener('click', () => openStudentRecord(Number(button.dataset.studentId))));
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function renderHomeClasses() {
+  homeClassesList.innerHTML = classes.slice(0, 3).map((item) => `
+    <article class="card home-class-card">
+      <div><span class="tag">${item.modality}</span><h3>${item.name}</h3></div>
+      <div class="home-class-card__meta">🗓 ${formatWeekdays(item.weekdays)} · ${item.startTime}</div>
+      <div class="home-class-card__meta">👥 ${item.studentIds.length} aluno(s)</div>
+      <button class="primary-button class-card__open" type="button" data-home-class-id="${item.id}">👥 Abrir chamada e conceitos →</button>
+      <button class="primary-button class-card__open" type="button" data-home-class-id="${item.id}">👥 Abrir chamada e notas →</button>
+    </article>
+  `).join('');
+
+  homeClassesList.querySelectorAll('[data-home-class-id]').forEach((button) => {
+    button.addEventListener('click', () => {
+      navigateToPage('turmas');
+      openClassDetail(button.dataset.homeClassId);
+    });
+  });
+}
+
+function showClassesOverview() {
+  selectedClassId = null;
+  selectedStudentId = null;
+  classesOverview.classList.remove('hidden');
+  classDetail.classList.add('hidden');
+  studentRecord.classList.add('hidden');
+}
+
+function openClassDetail(classId) {
+  const item = classes.find((entry) => entry.id === classId);
+  if (!item) return;
+  selectedClassId = classId;
+  classesOverview.classList.add('hidden');
+  studentRecord.classList.add('hidden');
+  classDetail.classList.remove('hidden');
+  classDetail.innerHTML = `
+    <button class="breadcrumb-button" type="button" id="backToClasses">← Voltar para Turmas</button>
+    <div class="card detail-hero">
+      <div><span class="tag">${item.modality}</span><h1>${item.name}</h1><p>${formatWeekdays(item.weekdays)} · ${item.startTime} - ${item.endTime} · ${findRoom(item.roomId).name}</p></div>
+      <strong>${item.studentIds.length} aluno(s)</strong>
+    </div>
+    <div><div class="section-header"><div><span class="flow-step">PASSO 2 DE 3</span><h2>Selecione um aluno</h2><p>Clique no nome do aluno para abrir a ficha de presença e conceitos.</p></div></div>
+    <div><div class="section-header"><div><span class="flow-step">PASSO 2 DE 3</span><h2>Selecione um aluno</h2><p>Clique no nome do aluno para abrir a ficha de presença e notas.</p></div></div>
+    <div><div class="section-header"><div><h2>ALUNOS DA TURMA</h2><p>Selecione um aluno para registrar presença e conceitos F.A.L.E.</p></div></div>
+      <div class="student-list">${item.studentIds.length ? item.studentIds.map((id) => {
+        const student = findStudent(id);
+        return `<button class="student-row" type="button" data-student-id="${id}"><span><strong>${student.name}</strong><span>${student.level}</span></span><span class="student-row__action">Acessar aluno →</span></button>`;
+      }).join('') : '<div class="card empty-state"><h3>Nenhum aluno nesta turma</h3><p>Edite a turma para adicionar integrantes.</p></div>'}</div>
+    </div>`;
+  document.getElementById('backToClasses').addEventListener('click', showClassesOverview);
+  classDetail.querySelectorAll('[data-student-id]').forEach((button) => button.addEventListener('click', () => openStudentRecord(Number(button.dataset.studentId))));
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
 function openStudentRecord(studentId) {
   const item = classes.find((entry) => entry.id === selectedClassId);
   const student = findStudent(studentId);
@@ -456,6 +748,16 @@ function renderStudentRecord(item, student) {
       <div id="saveFeedback" class="save-feedback hidden" role="status"></div><div class="modal__actions"><button class="primary-button" type="submit">Salvar presença e conceitos</button></div>
     </form></div>
     <div class="card record-card"><h2>Histórico de aulas</h2><div class="history-list">${records.length ? records.map((record) => `<div class="history-row"><strong>${formatDate(record.date)}</strong><span>${record.attendance}</span><div class="history-row__concepts">F: ${record.concepts.F} · A: ${record.concepts.A} · L: ${record.concepts.L} · E: ${record.concepts.E}</div></div>`).join('') : '<p class="helper-text">Nenhum registro realizado para este aluno.</p>'}</div></div>`;
+    <div class="card record-card"><span class="flow-step">PASSO 3 DE 3</span><h2>Presença e notas da aula</h2><form id="lessonForm" class="lesson-form">
+    <div class="card record-card"><h2>Registro da aula</h2><form id="lessonForm" class="lesson-form">
+      <div class="lesson-info-grid"><div class="field-group"><label for="lessonDate">Data da aula</label><input class="lesson-date" id="lessonDate" type="date" value="${today}" required></div>
+      <div class="field-group"><span class="field-label">Presença</span><div class="attendance-options"><label class="attendance-option"><input type="radio" name="attendance" value="Presente" checked><span>✓ Presente</span></label><label class="attendance-option"><input type="radio" name="attendance" value="Ausente"><span>✕ Ausente</span></label><label class="attendance-option"><input type="radio" name="attendance" value="Justificada"><span>! Justificada</span></label></div></div></div>
+      <div><span class="field-label">Conceitos F.A.L.E. <small>(notas de 0 a 10)</small></span><div class="fale-grid">
+        ${['F','A','L','E'].map((letter) => `<label class="fale-field"><strong>Conceito ${letter}</strong><small>Avaliação do desempenho na aula</small><input name="grade${letter}" type="number" min="0" max="10" step="0.1" required placeholder="0 a 10"></label>`).join('')}
+      </div></div><label class="field-group"><span class="field-label">Observações da aula</span><textarea class="lesson-notes" name="notes" placeholder="Registre comentários sobre o desempenho do aluno..."></textarea></label>
+      <div id="saveFeedback" class="save-feedback hidden" role="status"></div><div class="modal__actions"><button class="primary-button" type="submit">Salvar presença e notas</button></div>
+    </form></div>
+    <div class="card record-card"><h2>Histórico de aulas</h2><div class="history-list">${records.length ? records.map((record) => `<div class="history-row"><strong>${formatDate(record.date)}</strong><span>${record.attendance}</span><div class="history-row__grades">F: ${record.grades.F} · A: ${record.grades.A} · L: ${record.grades.L} · E: ${record.grades.E}</div></div>`).join('') : '<p class="helper-text">Nenhum registro realizado para este aluno.</p>'}</div></div>`;
   document.getElementById('backToStudents').addEventListener('click', () => openClassDetail(item.id));
   document.getElementById('lessonForm').addEventListener('submit', (event) => saveLessonRecord(event, item, student));
 }
@@ -465,11 +767,13 @@ function saveLessonRecord(event, item, student) {
   const form = event.currentTarget;
   const data = new FormData(form);
   const record = { date: document.getElementById('lessonDate').value, attendance: data.get('attendance'), concepts: { F: data.get('conceptF'), A: data.get('conceptA'), L: data.get('conceptL'), E: data.get('conceptE') }, notes: data.get('notes').trim() };
+  const record = { date: document.getElementById('lessonDate').value, attendance: data.get('attendance'), grades: { F: data.get('gradeF'), A: data.get('gradeA'), L: data.get('gradeL'), E: data.get('gradeE') }, notes: data.get('notes').trim() };
   const key = recordKey(item.id, student.id);
   lessonRecords[key] = [...(lessonRecords[key] || []).filter((entry) => entry.date !== record.date), record].sort((a, b) => b.date.localeCompare(a.date));
   renderStudentRecord(item, student);
   const feedback = document.getElementById('saveFeedback');
   feedback.textContent = 'Presença e conceitos R/B/MB/O salvos com sucesso.';
+  feedback.textContent = 'Presença e conceitos salvos com sucesso.';
   feedback.classList.remove('hidden');
 }
 
