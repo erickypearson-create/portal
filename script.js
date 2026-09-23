@@ -14,6 +14,23 @@ const weekdays = [
   { id: 'sab', label: 'Sáb' },
   { id: 'dom', label: 'Dom' },
 ];
+const libraryBooks = [
+  { id: 'new-w2-ha', name: 'New W2 HA', color: '#217db8' },
+  { id: 'new-w4', name: 'New W4', color: '#319274' },
+  { id: 'new-w4-ha', name: 'New W4 HA', color: '#52a78d' },
+  { id: 'new-w6', name: 'New W6', color: '#f18b69' },
+  { id: 'new-w8', name: 'New W8', color: '#a6667b' },
+  { id: 'new-w10', name: 'New W10', color: '#7d8791' },
+  { id: 'new-w12', name: 'New W12', color: '#b68a4c' },
+  { id: 'teens-2-ha', name: 'Teens 2 3rd Ed HA', color: '#96378f' },
+  { id: 'teens-2', name: 'Teens 2 3rd Edition', color: '#a23b98' },
+  { id: 'teens-4-ha', name: 'Teens 4 3rd Ed HA', color: '#168dc0' },
+  { id: 'teens-4', name: 'Teens 4 3rd Edition', color: '#238fbd' },
+  { id: 'teens-6', name: 'Teens 6 3rd Edition', color: '#39765e' },
+  { id: 'teens-8', name: 'Teens 8', color: '#c7751f' },
+  { id: 'teens-8-3rd', name: 'Teens 8 3rd Edition', color: '#a94f27' },
+  { id: 'w12', name: 'W12', color: '#91b866' },
+];
 const students = [
   { id: 1, name: 'Ana Paula Rocha', level: 'Teen 2' },
   { id: 2, name: 'Bruno Martins', level: 'Adults 4' },
@@ -100,6 +117,11 @@ const classesOverview = document.getElementById('classesOverview');
 const classDetail = document.getElementById('classDetail');
 const studentRecord = document.getElementById('studentRecord');
 const homeClassesList = document.getElementById('homeClassesList');
+const homeLibrarySelect = document.getElementById('homeLibrarySelect');
+const librarySearch = document.getElementById('librarySearch');
+const libraryBooksContainer = document.getElementById('libraryBooks');
+const libraryEmpty = document.getElementById('libraryEmpty');
+let selectedLibraryBookId = null;
 
 function initialize() {
   bindEvents();
@@ -108,6 +130,8 @@ function initialize() {
   syncPageWithHash();
   renderClasses();
   renderHomeClasses();
+  renderLibrarySelect();
+  renderLibraryBooks();
   updateRoomFeedback();
   window.addEventListener('hashchange', syncPageWithHash);
 }
@@ -126,6 +150,16 @@ function bindEvents() {
     navigateToPage('turmas');
   });
   document.getElementById('viewAllClassesButton').addEventListener('click', () => navigateToPage('turmas'));
+  document.getElementById('homeLibraryLink').addEventListener('click', (event) => {
+    event.preventDefault();
+    navigateToPage('biblioteca');
+  });
+  homeLibrarySelect.addEventListener('change', () => {
+    selectedLibraryBookId = homeLibrarySelect.value;
+    navigateToPage('biblioteca');
+    renderLibraryBooks();
+  });
+  librarySearch.addEventListener('input', renderLibraryBooks);
 
   document.getElementById('closeModal').addEventListener('click', closeModal);
   document.getElementById('cancelModal').addEventListener('click', closeModal);
@@ -143,7 +177,7 @@ function bindEvents() {
   navMenu.querySelectorAll('[data-nav-id]').forEach((link) => {
     link.addEventListener('click', (event) => {
       const pageId = link.dataset.navId;
-      if (pageId !== 'home' && pageId !== 'turmas') {
+      if (!['home', 'turmas', 'biblioteca'].includes(pageId)) {
         event.preventDefault();
         return;
       }
@@ -156,7 +190,7 @@ function bindEvents() {
 
 function syncPageWithHash() {
   const hashPage = window.location.hash.replace('#', '');
-  const nextPage = hashPage === 'turmas' ? 'turmas' : 'home';
+  const nextPage = ['turmas', 'biblioteca'].includes(hashPage) ? hashPage : 'home';
   selectPage(nextPage);
 }
 
@@ -177,6 +211,49 @@ function navigateToPage(pageId) {
   const nextHash = `#${pageId}`;
   if (window.location.hash !== nextHash) {
     window.location.hash = pageId;
+  }
+}
+
+function renderLibrarySelect() {
+  homeLibrarySelect.innerHTML = '<option value="">Escolha um livro para abrir a biblioteca</option>';
+  libraryBooks.forEach((book) => {
+    const option = document.createElement('option');
+    option.value = book.id;
+    option.textContent = book.name;
+    homeLibrarySelect.appendChild(option);
+  });
+}
+
+function renderLibraryBooks() {
+  const term = librarySearch.value.trim().toLowerCase();
+  const filteredBooks = libraryBooks.filter((book) => book.name.toLowerCase().includes(term));
+  libraryBooksContainer.innerHTML = '';
+  libraryEmpty.classList.toggle('hidden', filteredBooks.length > 0);
+
+  filteredBooks.forEach((book) => {
+    const isOpen = book.id === selectedLibraryBookId;
+    const article = document.createElement('article');
+    article.className = `library-book ${isOpen ? 'is-open' : ''}`;
+    article.innerHTML = `
+      <button class="library-book__button" type="button" aria-expanded="${isOpen}" aria-controls="book-content-${book.id}">
+        <span class="library-book__identity"><span class="library-book__cover" style="--book-color: ${book.color}">W</span><strong>${book.name}</strong></span>
+        <span class="library-book__chevron" aria-hidden="true">⌄</span>
+      </button>
+      <div class="library-book__content ${isOpen ? '' : 'hidden'}" id="book-content-${book.id}">
+        <button type="button" class="library-resource"><span>📖</span><span><strong>Livro digital</strong><small>Acessar conteúdo do aluno</small></span><b>→</b></button>
+        <button type="button" class="library-resource"><span>🎧</span><span><strong>Áudios</strong><small>Ouvir atividades e diálogos</small></span><b>→</b></button>
+        <button type="button" class="library-resource"><span>📝</span><span><strong>Recursos do professor</strong><small>Materiais de apoio para a aula</small></span><b>→</b></button>
+      </div>`;
+    article.querySelector('.library-book__button').addEventListener('click', () => {
+      selectedLibraryBookId = isOpen ? null : book.id;
+      homeLibrarySelect.value = selectedLibraryBookId || '';
+      renderLibraryBooks();
+    });
+    libraryBooksContainer.appendChild(article);
+  });
+
+  if (selectedLibraryBookId) {
+    requestAnimationFrame(() => document.getElementById(`book-content-${selectedLibraryBookId}`)?.scrollIntoView({ block: 'nearest', behavior: 'smooth' }));
   }
 }
 
@@ -289,6 +366,60 @@ function renderClasses() {
     const classId = card.querySelector('[data-open-id]').dataset.openId;
     card.addEventListener('click', () => openClassDetail(classId));
   });
+  classesList.querySelectorAll('.class-card').forEach((card) => {
+    const classId = card.querySelector('[data-open-id]').dataset.openId;
+    card.addEventListener('click', () => openClassDetail(classId));
+  });
+}
+
+function renderHomeClasses() {
+  homeClassesList.innerHTML = classes.slice(0, 3).map((item) => `
+    <article class="card home-class-card">
+      <div><span class="tag">${item.modality}</span><h3>${item.name}</h3></div>
+      <div class="home-class-card__meta">🗓 ${formatWeekdays(item.weekdays)} · ${item.startTime}</div>
+      <div class="home-class-card__meta">👥 ${item.studentIds.length} aluno(s)</div>
+      <button class="primary-button class-card__open" type="button" data-home-class-id="${item.id}">👥 Abrir chamada e conceitos →</button>
+    </article>
+  `).join('');
+
+  homeClassesList.querySelectorAll('[data-home-class-id]').forEach((button) => {
+    button.addEventListener('click', () => {
+      navigateToPage('turmas');
+      openClassDetail(button.dataset.homeClassId);
+    });
+  });
+}
+
+function showClassesOverview() {
+  selectedClassId = null;
+  selectedStudentId = null;
+  classesOverview.classList.remove('hidden');
+  classDetail.classList.add('hidden');
+  studentRecord.classList.add('hidden');
+}
+
+function openClassDetail(classId) {
+  const item = classes.find((entry) => entry.id === classId);
+  if (!item) return;
+  selectedClassId = classId;
+  classesOverview.classList.add('hidden');
+  studentRecord.classList.add('hidden');
+  classDetail.classList.remove('hidden');
+  classDetail.innerHTML = `
+    <button class="breadcrumb-button" type="button" id="backToClasses">← Voltar para Turmas</button>
+    <div class="card detail-hero">
+      <div><span class="tag">${item.modality}</span><h1>${item.name}</h1><p>${formatWeekdays(item.weekdays)} · ${item.startTime} - ${item.endTime} · ${findRoom(item.roomId).name}</p></div>
+      <strong>${item.studentIds.length} aluno(s)</strong>
+    </div>
+    <div><div class="section-header"><div><span class="flow-step">PASSO 2 DE 3</span><h2>Selecione um aluno</h2><p>Clique no nome do aluno para abrir a ficha de presença e conceitos.</p></div></div>
+      <div class="student-list">${item.studentIds.length ? item.studentIds.map((id) => {
+        const student = findStudent(id);
+        return `<button class="student-row" type="button" data-student-id="${id}"><span><strong>${student.name}</strong><span>${student.level}</span></span><span class="student-row__action">Acessar aluno →</span></button>`;
+      }).join('') : '<div class="card empty-state"><h3>Nenhum aluno nesta turma</h3><p>Edite a turma para adicionar integrantes.</p></div>'}</div>
+    </div>`;
+  document.getElementById('backToClasses').addEventListener('click', showClassesOverview);
+  classDetail.querySelectorAll('[data-student-id]').forEach((button) => button.addEventListener('click', () => openStudentRecord(Number(button.dataset.studentId))));
+  window.scrollTo({ top: 0, behavior: 'smooth' });
 }
 
 function renderHomeClasses() {

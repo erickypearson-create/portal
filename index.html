@@ -7,6 +7,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="styles.css?v=5" />
     <link rel="stylesheet" href="styles.css?v=4" />
     <link rel="stylesheet" href="styles.css?v=3" />
   </head>
@@ -144,10 +145,13 @@
             <div>
               <section class="section-header">
                 <h2>BIBLIOTECA</h2>
-                <a href="#" class="section-link">Biblioteca →</a>
+                <a href="#biblioteca" class="section-link" id="homeLibraryLink">Biblioteca →</a>
               </section>
               <div class="card library-card">
-                <div class="select-display">Selecionar um Curso <span>▾</span></div>
+                <label class="field-label" for="homeLibrarySelect">Selecionar um livro</label>
+                <select class="library-select" id="homeLibrarySelect">
+                  <option value="">Escolha um livro para abrir a biblioteca</option>
+                </select>
               </div>
             </div>
           </section>
@@ -180,6 +184,30 @@
               <div class="mini-group-card__meta">🗓</div>
               <div class="mini-group-card__meta">👥 0 Alunos</div>
             </article>
+          </section>
+        </section>
+
+        <section class="page" data-page="biblioteca" id="libraryPage">
+          <section class="section-header section-header--page">
+            <div>
+              <span class="flow-step">MATERIAIS DIDÁTICOS</span>
+              <h1>Biblioteca</h1>
+              <p>Selecione um livro para visualizar os materiais e recursos disponíveis.</p>
+            </div>
+          </section>
+
+          <section class="card library-search-card">
+            <div class="search-field">
+              <span>⌕</span>
+              <input id="librarySearch" type="search" placeholder="Buscar livro pelo nome" aria-label="Buscar livro pelo nome" />
+            </div>
+          </section>
+
+          <section id="libraryBooks" class="library-books" aria-live="polite"></section>
+          <section id="libraryEmpty" class="card empty-state hidden">
+            <div class="empty-state__icon">📚</div>
+            <h3>Nenhum livro encontrado</h3>
+            <p>Tente buscar usando outro nome.</p>
           </section>
         </section>
 
@@ -296,6 +324,7 @@
       </div>
     </div>
 
+    <script src="script.js?v=5"></script>
     <script src="script.js?v=4"></script>
     <script src="script.js?v=3"></script>
   </body>
