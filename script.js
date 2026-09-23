@@ -172,6 +172,7 @@ function bindEvents() {
     renderLibraryBooks();
   });
   });
+  });
   document.getElementById('topbarTurmasButton').addEventListener('click', (event) => {
     event.preventDefault();
     navigateToPage('turmas');
@@ -431,6 +432,23 @@ function renderClasses() {
     const classId = card.querySelector('[data-open-id]').dataset.openId;
     card.addEventListener('click', () => openClassDetail(classId));
   });
+}
+
+function renderHomeClasses() {
+  homeClassesList.innerHTML = classes.slice(0, 3).map((item) => `
+    <article class="card home-class-card">
+      <div><span class="tag">${item.modality}</span><h3>${item.name}</h3></div>
+      <div class="home-class-card__meta">🗓 ${formatWeekdays(item.weekdays)} · ${item.startTime}</div>
+      <div class="home-class-card__meta">👥 ${item.studentIds.length} aluno(s)</div>
+      <button class="primary-button class-card__open" type="button" data-home-class-id="${item.id}">👥 Abrir chamada e conceitos →</button>
+    </article>
+  `).join('');
+
+  homeClassesList.querySelectorAll('[data-home-class-id]').forEach((button) => {
+    button.addEventListener('click', () => {
+      navigateToPage('turmas');
+      openClassDetail(button.dataset.homeClassId);
+    });
   classesList.querySelectorAll('.class-card').forEach((card) => {
     const classId = card.querySelector('[data-open-id]').dataset.openId;
     card.addEventListener('click', () => openClassDetail(classId));
