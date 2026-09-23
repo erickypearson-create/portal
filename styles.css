@@ -337,6 +337,14 @@ button { cursor: pointer; }
 .library-search-card { padding: 18px; margin-bottom: 18px; }
 .library-books { display: grid; gap: 10px; }
 .library-book { overflow: hidden; border-radius: 10px; background: #f3f3f4; border: 1px solid transparent; }
+.library-book[open] { border-color: #b9e1ff; background: #fff; box-shadow: var(--shadow); }
+.library-book__button { width: 100%; min-height: 80px; padding: 16px 22px; border: 0; background: transparent; color: var(--primary); display: flex; justify-content: space-between; align-items: center; text-align: left; }
+.library-book__button::-webkit-details-marker { display: none; }
+.library-book__button::marker { content: ''; }
+.library-book__identity { display: flex; align-items: center; gap: 16px; font-size: 20px; }
+.library-book__cover { width: 40px; height: 40px; flex: 0 0 40px; border-radius: 50%; display: grid; place-items: center; color: #fff; font-weight: 800; font-style: italic; background: var(--book-color); box-shadow: inset 5px 0 10px rgba(255,255,255,.35); }
+.library-book__chevron { font-size: 24px; transition: transform .2s ease; }
+.library-book[open] .library-book__chevron { transform: rotate(180deg); }
 .library-book.is-open { border-color: #b9e1ff; background: #fff; box-shadow: var(--shadow); }
 .library-book__button { width: 100%; min-height: 80px; padding: 16px 22px; border: 0; background: transparent; color: var(--primary); display: flex; justify-content: space-between; align-items: center; text-align: left; }
 .library-book__identity { display: flex; align-items: center; gap: 16px; font-size: 20px; }
@@ -348,6 +356,8 @@ button { cursor: pointer; }
 .library-resource:hover { border-color: var(--accent); background: #f8fcff; }
 .library-resource strong, .library-resource small { display: block; }
 .library-resource small { color: var(--muted); margin-top: 3px; }
+.library-feedback { position: sticky; bottom: 18px; margin-top: 16px; padding: 14px 18px; border-radius: 12px; background: var(--primary); color: #fff; box-shadow: 0 12px 30px rgba(17, 38, 123, .25); display: grid; gap: 2px; }
+.library-feedback span { font-size: 14px; opacity: .85; }
 
 .modal { position: fixed; inset: 0; z-index: 40; display: grid; place-items: center; }
 .modal__backdrop { position: absolute; inset: 0; background: rgba(31, 39, 67, 0.45); }
