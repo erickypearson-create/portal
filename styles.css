@@ -23,6 +23,7 @@ body {
 }
 button, input, select { font: inherit; }
 button { cursor: pointer; }
+.secondary-button { text-decoration: none; display: inline-flex; align-items: center; justify-content: center; }
 .hidden { display: none !important; }
 
 .app-shell { min-height: 100vh; display: flex; }
@@ -124,6 +125,8 @@ button { cursor: pointer; }
 
 .page { display: none; padding-top: 24px; }
 .page--active { display: block; }
+.page:target { display: block; }
+body:has(.page:target) .page--active:not(:target) { display: none; }
 
 .card {
   background: var(--surface);

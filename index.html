@@ -7,6 +7,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="styles.css?v=7" />
     <link rel="stylesheet" href="styles.css?v=6" />
     <link rel="stylesheet" href="styles.css?v=5" />
     <link rel="stylesheet" href="styles.css?v=4" />
@@ -28,9 +29,9 @@
 
         <nav class="sidebar__nav" id="navMenu">
           <a href="#home" class="nav-item is-active" data-nav-id="home"><span class="nav-item__icon">⌂</span><span>Início</span></a>
-          <a href="#biblioteca" class="nav-item" data-nav-id="biblioteca"><span class="nav-item__icon">▣</span><span>Biblioteca</span></a>
+          <a href="biblioteca.html" class="nav-item" data-nav-id="biblioteca"><span class="nav-item__icon">▣</span><span>Biblioteca</span></a>
           <a href="#grupos" class="nav-item" data-nav-id="grupos"><span class="nav-item__icon">👥</span><span>Grupos</span></a>
-          <a href="#turmas" class="nav-item" data-nav-id="turmas"><span class="nav-item__icon">🧑‍🏫</span><span>Turmas</span></a>
+          <a href="turmas.html" class="nav-item" data-nav-id="turmas"><span class="nav-item__icon">🧑‍🏫</span><span>Turmas</span></a>
           <a href="#calendario" class="nav-item" data-nav-id="calendario"><span class="nav-item__icon">🗓</span><span>Calendário</span></a>
           <a href="#painel" class="nav-item" data-nav-id="painel"><span class="nav-item__icon">◫</span><span>Painel</span></a>
           <a href="#idioma" class="nav-item" data-nav-id="idioma"><span class="nav-item__icon">🌐</span><span>Idioma</span></a>
@@ -58,7 +59,7 @@
             </div>
           </div>
           <div class="topbar__actions">
-            <button class="secondary-button topbar__link" id="topbarTurmasButton">Turmas</button>
+            <a href="turmas.html" class="secondary-button topbar__link" id="topbarTurmasButton">Turmas</a>
             <div class="topbar__avatar">G</div>
           </div>
         </header>
@@ -76,7 +77,7 @@
               <span class="tag">CONNECTIONS</span>
               <span class="tag">INTERACTIVE</span>
               <span class="tag">CONNECT_AND_LEARN</span>
-              <button class="secondary-button hero__action" id="heroTurmasButton">Ir para Turmas</button>
+              <a href="turmas.html" class="secondary-button hero__action" id="heroTurmasButton">Ir para Turmas</a>
             </div>
           </section>
 
@@ -146,6 +147,7 @@
             <div>
               <section class="section-header">
                 <h2>BIBLIOTECA</h2>
+                <a href="biblioteca.html" class="section-link" id="homeLibraryLink">Biblioteca →</a>
                 <a href="#biblioteca" class="section-link" id="homeLibraryLink">Biblioteca →</a>
               </section>
               <div class="card library-card">
@@ -326,6 +328,7 @@
       </div>
     </div>
 
+    <script src="script.js?v=7"></script>
     <script src="script.js?v=6"></script>
     <script src="script.js?v=5"></script>
     <script src="script.js?v=4"></script>
