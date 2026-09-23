@@ -99,6 +99,7 @@ const saveClassButton = document.getElementById('saveClassButton');
 const classesOverview = document.getElementById('classesOverview');
 const classDetail = document.getElementById('classDetail');
 const studentRecord = document.getElementById('studentRecord');
+const homeClassesList = document.getElementById('homeClassesList');
 
 function initialize() {
   bindEvents();
@@ -106,6 +107,7 @@ function initialize() {
   renderSelectOptions();
   syncPageWithHash();
   renderClasses();
+  renderHomeClasses();
   updateRoomFeedback();
   window.addEventListener('hashchange', syncPageWithHash);
 }
@@ -123,6 +125,7 @@ function bindEvents() {
   document.getElementById('heroTurmasButton').addEventListener('click', () => {
     navigateToPage('turmas');
   });
+  document.getElementById('viewAllClassesButton').addEventListener('click', () => navigateToPage('turmas'));
 
   document.getElementById('closeModal').addEventListener('click', closeModal);
   document.getElementById('cancelModal').addEventListener('click', closeModal);
@@ -285,6 +288,24 @@ function renderClasses() {
   classesList.querySelectorAll('.class-card').forEach((card) => {
     const classId = card.querySelector('[data-open-id]').dataset.openId;
     card.addEventListener('click', () => openClassDetail(classId));
+  });
+}
+
+function renderHomeClasses() {
+  homeClassesList.innerHTML = classes.slice(0, 3).map((item) => `
+    <article class="card home-class-card">
+      <div><span class="tag">${item.modality}</span><h3>${item.name}</h3></div>
+      <div class="home-class-card__meta">🗓 ${formatWeekdays(item.weekdays)} · ${item.startTime}</div>
+      <div class="home-class-card__meta">👥 ${item.studentIds.length} aluno(s)</div>
+      <button class="primary-button class-card__open" type="button" data-home-class-id="${item.id}">👥 Abrir chamada e notas →</button>
+    </article>
+  `).join('');
+
+  homeClassesList.querySelectorAll('[data-home-class-id]').forEach((button) => {
+    button.addEventListener('click', () => {
+      navigateToPage('turmas');
+      openClassDetail(button.dataset.homeClassId);
+    });
   });
 }
 
@@ -457,6 +478,7 @@ function handleSaveClass(event) {
   }
 
   renderClasses();
+  renderHomeClasses();
   closeModal();
   navigateToPage('turmas');
 }

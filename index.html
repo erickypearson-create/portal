@@ -7,7 +7,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet" />
-    <link rel="stylesheet" href="styles.css" />
+    <link rel="stylesheet" href="styles.css?v=3" />
   </head>
   <body>
     <div class="app-shell">
@@ -75,6 +75,18 @@
               <span class="tag">CONNECT_AND_LEARN</span>
               <button class="secondary-button hero__action" id="heroTurmasButton">Ir para Turmas</button>
             </div>
+          </section>
+
+          <section class="home-classes" aria-labelledby="homeClassesTitle">
+            <div class="section-header">
+              <div>
+                <span class="flow-step">ACESSO RÁPIDO</span>
+                <h2 id="homeClassesTitle">MINHAS TURMAS E CHAMADA</h2>
+                <p>Abra uma turma para acessar os alunos, dar presença e lançar as notas F.A.L.E.</p>
+              </div>
+              <button class="secondary-button" id="viewAllClassesButton">Ver todas as turmas →</button>
+            </div>
+            <div id="homeClassesList" class="home-classes__grid"></div>
           </section>
 
           <section class="section-header">
@@ -281,6 +293,6 @@
       </div>
     </div>
 
-    <script src="script.js"></script>
+    <script src="script.js?v=3"></script>
   </body>
 </html>
